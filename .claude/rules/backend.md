@@ -12,21 +12,24 @@ paths:
   pytest for tests, Pydantic for validation and settings.
 - Use the `logging` module with structured JSON output; never `print()`.
 
-## Structure (proposed; finalized in docs/ARCHITECTURE.md)
+## Structure (see docs/ARCHITECTURE.md section 3)
 ```
 backend/app/
-  core/          configuration, logging, database, security primitives
-  modules/       domain modules: identity, catalog, cart, orders,
-                 payments, inventory, imports, admin
-  platform/      cross-cutting components (Gatekeeper, jobs, audit,
-                 feature flags, notifications, Watchdog)
+  api/           versioned router assembly, shared dependencies,
+                 middleware, error handlers, OpenAPI configuration
+  core/          configuration, logging, errors, security primitives
+  database/      PostgreSQL engine and sessions, Redis client, migrations
+  modules/       auth, users, catalog, inventory, cart, orders,
+                 payments, admin, ai
   integrations/  internal SDK and external provider adapters
-  ai/            agents, LLM ports and MCP tools
+  platform/      Gatekeeper, jobs, scheduler, audit, feature flags,
+                 notifications, resilience, Watchdog
 backend/tests/
 ```
-- Modules interact through service interfaces; never import another
-  module's repositories or ORM models directly.
-- Business logic must not depend on FastAPI, SQLAlchemy or provider SDKs.
+- Follow the dependency rules in ARCHITECTURE section 3.2; no cycles.
+- Modules interact through each other's public service interfaces; never
+  import another module's repositories or ORM models directly.
+- Domain rules must not depend on FastAPI request objects or provider SDKs.
 
 ## FastAPI
 - Keep routers thin; put logic in services.
@@ -42,7 +45,9 @@ backend/tests/
 - SQLAlchemy 2.x typed models; explicit transaction boundaries.
 - Change schemas only through Alembic migrations. Never edit an applied
   migration. Follow expand/contract so the previous release keeps working.
-- Use row-level locking or equivalent for stock reservation.
+- Check and decrement stock atomically inside the order transaction
+  (conditional update or row lock) to prevent overselling; no stock
+  reservation in the initial checkout.
 - Destructive database operations require explicit user approval.
 
 ## Domain Conventions

@@ -3,16 +3,16 @@
 | Field | Value |
 |---|---|
 | Document | Implementation Roadmap |
-| Version | 0.1 — Draft |
+| Version | 0.2 — Draft |
 | Status | Draft, pending project owner approval |
-| Jira | SHOP-002 |
+| Jira | SHOP-002, SHOP-003 |
 | Current milestone | M0 — Project Initialization |
 | Last updated | 2026-11-25 |
-| Related | `docs/PRD.md` v0.2, `CLAUDE.md`, `.claude/rules/` |
+| Related | `docs/PRD.md` v0.3, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `CLAUDE.md`, `.claude/rules/` |
 
 > **Implementation status:** only M0 documentation work has been performed
-> (SHOP-001 complete, SHOP-002 in progress). Everything else in this
-> roadmap is **planned**.
+> (SHOP-001 and SHOP-002 complete, SHOP-003 in progress). Everything else
+> in this roadmap is **planned**.
 
 ## 1. How to Read This Roadmap
 
@@ -30,8 +30,15 @@
   implementation with Claude Code, review, tests and documentation).
 - **PRD IDs** reference `docs/PRD.md`. Requirement-to-milestone mapping is
   in section 9.
+- **Delivery tiers** (section 2.2) prioritize delivery *across* milestones:
+  Tier 1 *Essential portfolio release*, Tier 2 *Advanced portfolio
+  features*, Tier 3 *Optional production-grade enhancements*. Milestones
+  define technical sequencing; tiers define what ships first. Not every
+  backlog task is required for the initial portfolio release.
 
-## 2. Planning Assumptions and Estimates
+## 2. Planning Assumptions, Estimates and Delivery Tiers
+
+### 2.1 Full-Scope Estimates
 
 - One developer: a computer science graduate learning AWS and DevOps,
   developing with Claude Code.
@@ -44,40 +51,146 @@
 | Milestone | Track | MVP days | ADV days | Buffered total | Full-time weeks | Part-time weeks |
 |---|---|---|---|---|---|---|
 | M0 Foundations | MVP | 8 | — | 10 | 2.5 | 5 |
-| M1 App foundations, basic CI | MVP | 13.5 | — | 17 | 4.2 | 8.4 |
+| M1 App foundations, basic CI | MVP | 14.5 | — | 18.1 | 4.5 | 9.1 |
 | M2 Database and catalog | MVP | 15.5 | — | 19.4 | 4.8 | 9.7 |
 | M3 Storefront and checkout | MVP | 25 | — | 31.3 | 7.8 | 15.6 |
 | M4 Admin and auditing | MVP | 17 | 6 | 28.8 | 7.2 | 14.4 |
 | M5 SDK, jobs, Gatekeeper | MVP | 17.5 | 16.5 | 42.5 | 10.6 | 21.3 |
 | M6 AI assistant and MCP | MVP | 19 | 8.5 | 34.4 | 8.6 | 17.2 |
-| M7 Containers and mature CI/CD | MVP | 19.5 | — | 24.4 | 6.1 | 12.2 |
+| M7 Containers and mature CI/CD | MVP | 20 | — | 25 | 6.3 | 12.5 |
 | M8 kind, Helm, Argo CD, Watchdog | ADV | — | 20.5 | 30.8 | 7.7 | 15.4 |
 | M9 AWS evaluation and Terraform | ADV | — | 14.5 | 21.8 | 5.4 | 10.9 |
 | M10 AWS deployment | ADV | — | 20.5 | 30.8 | 7.7 | 15.4 |
 | M11 DevOps AI and portfolio | ADV | — | 17 | 21.3 | 5.3 | 10.6 |
 | Advanced commerce backlog | ADV | — | 9 | 11.3 | 2.8 | 5.6 |
-| **Total** | | **135** | **112.5** | **≈ 323** | **≈ 81** | **≈ 162** |
+| **Total** | | **136.5** | **112.5** | **≈ 325** | **≈ 81** | **≈ 163** |
 
-**Realism note:** the full scope is large for one developer. The MVP track
-alone (M0–M7 MVP tasks, ≈ 169 buffered days) is a complete portfolio
-project. Recommended prioritization if time is limited:
+These full-scope figures are conservative, ideal-day estimates for every
+task. The **full scope is not required for the first portfolio release**;
+section 2.2 defines a focused Tier 1 delivery plan using AI-assisted
+estimates. All estimates are re-baselined after M1 using measured velocity.
 
-1. Complete the MVP track (M0–M7) without optional `ADV` tasks.
-2. Advanced core: M8 → M9 → a minimal M10 (staging only) → M11 DevOps AI.
-3. Optional `ADV` tasks in M4–M6 and the advanced commerce backlog last.
+### 2.2 Portfolio Delivery Tiers
+
+| Tier | Name | Purpose | Release |
+|---|---|---|---|
+| 1 | Essential portfolio release | Smallest complete, secure, tested, locally runnable store with a grounded AI assistant | `v0.1.0-portfolio` (SHOP-123), target 6–8 weeks |
+| 2 | Advanced portfolio features | Remaining MVP capabilities plus DevOps showcase: imports and jobs, mature CI/CD, kind/Helm/Argo CD, observability, cost-approved AWS staging, DevOps AI | MVP release (SHOP-083) and later tags |
+| 3 | Optional production-grade enhancements | Hardening and extras with lower portfolio value per effort | As time permits |
+
+**Tier assignment** (task numbers are `SHOP-NNN`; every task belongs to
+exactly one tier):
+
+| Milestone | Tier 1 — Essential | Tier 2 — Advanced | Tier 3 — Optional |
+|---|---|---|---|
+| M0 | 001, 002, 003, 004, 005, 006, 007, 008, 009 | — | — |
+| M1 | 010, 011, 012, 013, 014, 015, 016, 017, 018, 019, 020, 122 | — | — |
+| M2 | 021, 022, 023, 024, 025, 026, 027, 029 | 028 | — |
+| M3 | 030, 031, 032, 033, 034, 035, 036, 037, 038, 039 | — | — |
+| M4 | 040, 041, 042, 043, 044, 045 | 046, 049 | 047, 048, 050 |
+| M5 | 053, 054 | 051, 052, 055, 056, 057, 058, 063 | 059, 060, 061, 062 |
+| M6 | 064, 065, 066, 067, 068, 069 | 070, 071 | 072, 073, 074 |
+| M7 | 076, 079, 082, 123 | 075, 077, 078, 080, 081, 083 | — |
+| M8 | — | 084, 085, 086, 087, 088, 089, 090, 091, 092 | — |
+| M9 | — | 093, 094, 095, 096, 097, 098, 099 | — |
+| M10 | — | 100, 101, 102, 103, 105, 106, 107 | 104, 108 |
+| M11 | — | 109, 110, 111, 114, 115, 116 | 112, 113 |
+| Backlog | — | — | 117, 118, 119, 120, 121 |
+
+Tier 1 tasks depend only on Tier 1 tasks; Tier 2 tasks depend only on
+Tier 1 or Tier 2 tasks (verified by the documentation validation script).
+
+### 2.3 Essential Portfolio Release Plan (Tier 1)
+
+**Target:** 8 weeks full-time (≈ 40 AI-assisted ideal days). A 6-week
+delivery is possible only if M1 velocity is at least 30% higher than
+assumed or if the de-scoping candidates below are applied.
+
+| Week | Focus | Tier 1 tasks | AI-assisted days |
+|---|---|---|---|
+| 1 | Finish M0; start M1 | 003–009; 010–013 | 5 |
+| 2 | Finish M1 (incl. basic containers); start M2 | 014–020, 122; 021, 022 | 4.5 |
+| 3 | Finish M2 | 023–027, 029 | 5.25 |
+| 4 | M3 identity, storefront and product pages | 030–035 | 5.25 |
+| 5 | M3 cart, checkout, orders and end-to-end tests | 036–039 | 4.5 |
+| 6 | M4 back office | 040–045 | 5.25 |
+| 7 | M5 SDK and Gatekeeper; M6 foundations | 053, 054; 064–066; start 067 | 5 |
+| 8 | Finish M6; Tier 1 M7; release | 067–069; 076, 079, 082, 123 | 5.5 |
+| | **Total** | | **40.25** |
+
+Per-milestone Tier 1 AI-assisted estimates (ideal days): M0 3.25 · M1 5.75
+· M2 5.75 · M3 9.75 · M4 5.25 · M5 2 · M6 6.25 · M7 2.25.
+
+**AI-assisted estimate basis:** Claude Code generates most boilerplate,
+tests and documentation drafts; the developer designs, reviews every
+change, debugs and makes decisions. Estimates are roughly 40% of the
+conservative figures in section 2.1.
+
+**Assumptions:**
+
+- Full-time capacity of about 5 focused ideal days per week.
+- Scope frozen to Tier 1 for the 8 weeks; no new features.
+- Mock AI provider only (a real provider requires approval and is optional).
+- No cloud work; everything runs locally with Docker Compose.
+- Tests are written with each task, not afterwards.
+- The re-estimation checkpoint at the end of week 2 (after M1) is honoured.
+
+**Tier 1 release contents:** sign-in, storefront, search and facets,
+product pages, comparison, cart, wishlist, simulated checkout with
+transactional stock, orders, profile, RBAC, audit, admin catalog, inventory
+and orders, basic dashboard, internal SDK, Gatekeeper, grounded AI
+assistant with read-only MCP tools and evaluation, basic containers,
+Compose, CI with scanning, security review.
+
+**Excluded from Tier 1** (Tier 2 or 3): CSV/JSON imports and background
+jobs, dead-letter queue, performance dataset and baseline, production
+image optimization, end-to-end tests in CI, coverage gate, Kubernetes,
+AWS and DevOps AI.
+
+**PRD acceptance criteria met by Tier 1:** AC-001 to AC-020, AC-029,
+AC-034 to AC-036, AC-040 to AC-046, AC-048, AC-049 (for the ports built in
+Tier 1) and AC-054.
+
+**Features likely to need additional time:**
+
+| Feature | Why | Mitigation |
+|---|---|---|
+| Session cookies with server-side rendering and CSRF (SHOP-031, 032) | Cookie forwarding between Next.js server components and FastAPI is error-prone | Same-origin proxy design (ARCHITECTURE section 6.5); early spike in week 4 |
+| Faceted search with counts (SHOP-027) | Query design and performance tuning | Limit filterable attributes for Tier 1 |
+| Concurrent checkout correctness (SHOP-037) | Concurrency tests and transaction design | Single-transaction design (ARCHITECTURE section 7.5) |
+| LangGraph and MCP integration (SHOP-066, 067) | New frameworks; evolving APIs | Keep the graph small; deterministic logic first |
+| Accessibility fixes (SHOP-039) | Late discovery is costly | Use accessible primitives and run automated checks from week 4 |
+| Review load of AI-generated code | Quality depends on careful review | Small tasks and pull requests; never merge unreviewed code |
+
+**De-scoping candidates for a 6-week release:** simplify comparison to two
+products (SHOP-035, −0.5 day), defer the dashboard (SHOP-045, −0.75),
+defer admin customer views (SHOP-044, −0.75), reduce the AI evaluation
+set to its minimum sizes (SHOP-069, −0.5), and defer wishlist (part of
+SHOP-036, −0.5).
+
+### 2.4 Approved Planning Decisions (SHOP-003)
+
+| Decision | Reference |
+|---|---|
+| Early security scanning (Gitleaks, Dependabot, pip-audit, npm audit) from M1 | SHOP-018 |
+| `backend/app/platform/` directory for platform components | ADR-0001, ARCHITECTURE section 3 |
+| Internal integration SDK under `backend/app/integrations/` | ADR-0003 |
+| AWS container platform decision deferred until cost evaluation | ADR-0006, UD-01, SHOP-093 |
+| Basic Dockerfiles in M1, Compose expanded progressively, production optimization in M7 | ADR-0008, SHOP-122, SHOP-075 |
+| No stock reservation for the initial checkout; transactional stock decrement | FR-CHK-007, ARCHITECTURE section 7.5 |
 
 ## 3. Milestone Overview
 
 | ID | Milestone | Track | Key outcome | Depends on |
 |---|---|---|---|---|
 | M0 | Project initialization and engineering foundations | MVP | Approved documentation, ADRs, repository and Jira setup | — |
-| M1 | Frontend and backend foundations, local development and basic CI | MVP | Running skeleton apps, quality tooling, basic CI and security scanning | M0 |
+| M1 | Frontend and backend foundations, local development and basic CI | MVP | Running skeleton apps in basic containers, quality tooling, basic CI and security scanning | M0 |
 | M2 | PostgreSQL, migrations, product catalog and demo data | MVP | Catalog API with search and facets over deterministic demo data | M1 |
 | M3 | Customer authentication, storefront, search, cart and simulated checkout | MVP | Complete customer journey with simulated payment | M2 |
 | M4 | Admin dashboard, inventory, order management and auditing | MVP | Operational back office with RBAC and audit trail | M3 |
 | M5 | Internal SDK, integrations, product synchronization, jobs and Gatekeeper | MVP | Integration layer, background jobs, imports, quotas and DLQ | M4 |
 | M6 | AI shopping assistant, MCP tools, provider abstraction and AI evaluation | MVP | Grounded assistant on the mock provider with evaluation suites | M5 |
-| M7 | Docker, integration testing, security scanning and mature CI/CD | MVP | **MVP release:** containerized stack, mature gates, performance baseline | M6 |
+| M7 | Docker, integration testing, security scanning and mature CI/CD | MVP | Tier 1 portfolio release; **MVP release:** production-optimized containers, mature gates, performance baseline | M6 |
 | M8 | Local Kubernetes, Helm, Argo CD, monitoring and Watchdog | ADV | GitOps on kind with full observability | M7 |
 | M9 | AWS architecture evaluation, Terraform, cost analysis and approved infrastructure | ADV | Approved cloud design, Terraform code, cost guardrails, minimal foundation | M8 |
 | M10 | AWS deployment, promotion, GitOps, observability, rollback and incidents | ADV | Cost-approved staging (and optional demo) environment | M9 |
@@ -120,7 +233,10 @@ flowchart TD
   S011 --> S017["SHOP-017 Basic CI"]
   S014 --> S017
   S017 --> S020["SHOP-020 Developer docs"]
+  S010 --> S122["SHOP-122 Basic Dockerfiles + Compose"]
+  S014 --> S122
   S020 --> S022["SHOP-022 Compose PostgreSQL"]
+  S122 --> S022
   S022 --> S023["SHOP-023 SQLAlchemy + Alembic"]
   S023 --> S024["SHOP-024 Catalog model"]
   S024 --> S026["SHOP-026 Catalog API"]
@@ -155,10 +271,12 @@ flowchart TD
   S065 --> S067["SHOP-067 Shopping assistant"]
   S066 --> S067
   S067 --> S069["SHOP-069 AI evaluation"]
-  S069 --> S075["SHOP-075 Dockerfiles"]
-  S075 --> S076["SHOP-076 Full Compose stack"]
+  S069 --> S075["SHOP-075 Production image optimization"]
+  S122 --> S076["SHOP-076 Full Compose stack"]
   S076 --> S078["SHOP-078 E2E in CI"]
-  S075 --> S079["SHOP-079 Scanning maturity"]
+  S122 --> S079["SHOP-079 Scanning maturity"]
+  S076 --> S123["SHOP-123 Tier 1 portfolio release"]
+  S082 --> S123
   S078 --> S080["SHOP-080 CI/CD maturity"]
   S079 --> S080
   S079 --> S082["SHOP-082 Security review"]
@@ -189,6 +307,7 @@ Basic testing, security, logging and CI start early; later milestones
 | Rate limiting | M3 (SHOP-033), library-based | Consolidated in Gatekeeper in M5 (SHOP-054) |
 | Auditing | Security events in logs, M3 | Persistent audit service in M4 (SHOP-041) |
 | Feature flags | M1 (SHOP-016), typed settings | Used to gate AI and providers in M5–M6 |
+| Containers | M1 basic Dockerfiles and Compose (SHOP-122); Compose expanded with PostgreSQL (M2), Redis (M3) and worker (M5) | Production-optimized images and full-stack verification in M7 (SHOP-075, SHOP-076) |
 | CI | M1 lint, types, tests (SHOP-017) | DB tests (M2), images and gates (M7), Terraform checks (M9), promotion (M10) |
 
 ## 6. Global Definition of Done
@@ -221,8 +340,8 @@ Each milestone adds its own criteria below.
 | ID | Task | Track | Priority | Effort | Depends on | Status |
 |---|---|---|---|---|---|---|
 | SHOP-001 | Engineering decisions and PRD | MVP | Highest | 1 | — | Done |
-| SHOP-002 | Engineering refinement, Claude rules and roadmap | MVP | Highest | 1 | SHOP-001 | In progress |
-| SHOP-003 | Architecture document and initial ADRs (template; 0001 modular monolith; 0002 AI in backend; 0003 cookie sessions and CSRF; 0004 money as integer cents) | MVP | Highest | 2 | SHOP-002 | Planned |
+| SHOP-002 | Engineering refinement, Claude rules and roadmap | MVP | Highest | 1 | SHOP-001 | Done |
+| SHOP-003 | Architecture document, ADR template, ADR-0001 to ADR-0008 and roadmap delivery tiers | MVP | Highest | 2 | SHOP-002 | In progress |
 | SHOP-004 | Security documentation: threat model and security baseline (`SECURITY.md`) | MVP | High | 1 | SHOP-003 | Planned |
 | SHOP-005 | Development and contribution guides (`DEVELOPMENT.md`, `CONTRIBUTING.md`) | MVP | High | 1 | SHOP-003 | Planned |
 | SHOP-006 | `README.md`, `DECISIONS.md` index and `.env.example` skeleton | MVP | High | 0.5 | SHOP-003, SHOP-005 | Planned |
@@ -231,13 +350,13 @@ Each milestone adds its own criteria below.
 | SHOP-009 | Jira project setup and backlog import (section 10) | MVP | Medium | 0.5 | SHOP-002 | Planned |
 
 - **Deliverables:** PRD, ROADMAP, ARCHITECTURE, SECURITY, DEVELOPMENT,
-  CONTRIBUTING, README, DECISIONS, ADR-0001 to ADR-0004, rules, repository.
+  CONTRIBUTING, README, DECISIONS, ADR-0001 to ADR-0008, rules, repository.
 - **PRD requirements:** NFR-DOC-001, NFR-SEC-013, NFR-PORT-002 (skeleton).
 - **Acceptance criteria:**
   - All documents required by `CLAUDE.md` section 13 exist, are non-empty
     and are mutually consistent.
   - PRD and roadmap IDs are unique (automated grep check).
-  - ADR-0001 to ADR-0004 are accepted and indexed.
+  - ADR-0001 to ADR-0008 are accepted and indexed.
   - The initial commit is on GitHub with branch protection documented.
 - **Required tests:** documentation consistency checks (ID uniqueness,
   cross-references, Mermaid syntax review), `git check-ignore` checks.
@@ -250,17 +369,20 @@ Each milestone adds its own criteria below.
 
 ### M1 — Frontend and Backend Foundations, Local Development and Basic CI
 
-- **Objective:** create runnable backend and frontend skeletons with
-  quality tooling, logging, health checks, feature flags, a typed API
-  client and a basic CI pipeline with security scanning.
+- **Objective:** create runnable backend and frontend skeletons, packaged
+  in basic containers, with quality tooling, logging, health checks,
+  feature flags, a typed API client and a basic CI pipeline with security
+  scanning.
 - **Prerequisites:** M0 exit; UD-11 decided; repository on GitHub.
 - **Technologies introduced:** Python 3.13, uv, FastAPI, Pydantic and
   Pydantic Settings, Ruff, mypy, pytest; Node.js LTS, npm, Next.js,
   React, TypeScript (strict), Tailwind CSS, shadcn/ui, ESLint, Prettier;
-  OpenAPI type generator (UD-14); GitHub Actions; Gitleaks; Dependabot;
-  pip-audit; npm audit.
-- **Scope:** in: skeletons, tooling, CI, logging, health, flags, API
-  client. Out: database, business features, containers for the app.
+  OpenAPI type generator (UD-14); Docker (basic Dockerfiles); Docker
+  Compose (backend and frontend services); GitHub Actions; Gitleaks;
+  Dependabot; pip-audit; npm audit.
+- **Scope:** in: skeletons, tooling, basic containers, CI, logging,
+  health, flags, API client. Out: database, business features,
+  production image optimization (M7).
 
 | ID | Task | Track | Priority | Effort | Depends on |
 |---|---|---|---|---|---|
@@ -275,16 +397,20 @@ Each milestone adds its own criteria below.
 | SHOP-018 | Basic security automation: Gitleaks, Dependabot, pip-audit and npm audit (reporting) | MVP | High | 1 | SHOP-017 |
 | SHOP-019 | Security headers and CORS baseline (backend and Next.js) | MVP | High | 1 | SHOP-012, SHOP-014 |
 | SHOP-020 | Update `DEVELOPMENT.md` with local setup and verification commands | MVP | Medium | 0.5 | SHOP-017 |
+| SHOP-122 | Basic Dockerfiles for backend and frontend; initial Docker Compose running both applications (added in SHOP-003) | MVP | High | 1 | SHOP-010, SHOP-014 |
 
-- **Deliverables:** runnable backend and frontend, CI workflows,
-  Dependabot configuration, generated API client, updated docs.
+- **Deliverables:** runnable backend and frontend (natively and in basic
+  containers), CI workflows, Dependabot configuration, generated API
+  client, updated docs.
 - **PRD requirements:** NFR-MNT-001 to 003, NFR-OBS-001, NFR-OBS-002,
   NFR-SEC-008 to 010, NFR-SEC-014, NFR-PORT-002, NFR-REL-008,
-  FR-DEV-003, FR-DEV-005, FR-DEV-006, FR-PLAT-013, FR-PLAT-015 (foundation),
-  NFR-COST-009.
+  FR-DEV-001 (basic), FR-DEV-002 (basic), FR-DEV-003, FR-DEV-005,
+  FR-DEV-006, FR-PLAT-013, FR-PLAT-015 (foundation), NFR-COST-009.
 - **Acceptance criteria:**
   - `uv run pytest`, `uv run ruff check`, `uv run mypy`, `npm run lint`,
     `npm run build` succeed locally and in CI.
+  - `docker compose up` starts the backend and frontend; both health
+    endpoints respond.
   - CI completes in under 10 minutes on a pull request.
   - Health endpoints return HTTP 200; logs are JSON with a request ID.
   - AC-048 (stale generated types fail CI).
@@ -304,16 +430,16 @@ Each milestone adds its own criteria below.
 - **Objective:** persist the catalog in PostgreSQL with migrations, expose
   catalog and search APIs, and seed deterministic demo data.
 - **Prerequisites:** M1 exit; UD-07 decided in SHOP-021.
-- **Technologies introduced:** PostgreSQL, Docker Compose (local backing
-  services), SQLAlchemy 2.x, Alembic, PostgreSQL full-text search and
-  trigram matching (per UD-07).
+- **Technologies introduced:** PostgreSQL (added to the existing Compose
+  stack), SQLAlchemy 2.x, Alembic, PostgreSQL search features as decided
+  by UD-07.
 - **Scope:** in: data model, migrations, catalog and search APIs, demo
   and performance datasets. Out: authentication, cart, admin UI.
 
 | ID | Task | Track | Priority | Effort | Depends on |
 |---|---|---|---|---|---|
 | SHOP-021 | ADR: search implementation (UD-07) and data access conventions | MVP | High | 0.5 | SHOP-020 |
-| SHOP-022 | Docker Compose for PostgreSQL with health checks and localhost-only ports | MVP | Highest | 1 | SHOP-020 |
+| SHOP-022 | Extend Docker Compose with PostgreSQL (health checks, localhost-only ports, named volume) | MVP | Highest | 1 | SHOP-020, SHOP-122 |
 | SHOP-023 | SQLAlchemy setup, Alembic migrations, migration upgrade/downgrade check in CI | MVP | Highest | 2 | SHOP-022 |
 | SHOP-024 | Catalog domain model: category hierarchy, attribute schemas, products, images, cents pricing, status, source metadata, availability categories | MVP | Highest | 3 | SHOP-021, SHOP-023 |
 | SHOP-025 | Deterministic demo data seeder: ≥ 50 products across eight categories with specifications, prices, stock and labeled demo reviews | MVP | Highest | 2 | SHOP-024 |
@@ -351,7 +477,8 @@ Each milestone adds its own criteria below.
   automated accessibility checks.
 - **Scope:** in: identity, storefront UI, product pages, comparison, cart,
   wishlist, checkout, payment simulator, orders, profile. Out: admin,
-  background jobs (reservation expiry uses on-read expiry until M5).
+  background jobs, stock reservations (overselling is prevented by a
+  single-transaction stock check-and-decrement, FR-CHK-007).
 
 | ID | Task | Track | Priority | Effort | Depends on |
 |---|---|---|---|---|---|
@@ -362,7 +489,7 @@ Each milestone adds its own criteria below.
 | SHOP-034 | Storefront UI: home, category listings, facets, sorting, URL state, breadcrumbs, responsive layout | MVP | Highest | 4 | SHOP-027, SHOP-015 |
 | SHOP-035 | Product detail page with specifications and attribution; comparison view; demo reviews | MVP | High | 3 | SHOP-034 |
 | SHOP-036 | Cart (guest and customer, merge, server-side totals, price-change notices) and wishlist | MVP | Highest | 3 | SHOP-031, SHOP-034 |
-| SHOP-037 | Checkout: stock reservation, idempotent order placement, payment simulator, order state machine | MVP | Highest | 4 | SHOP-036 |
+| SHOP-037 | Checkout: transactional stock check-and-decrement, idempotent order placement, payment simulator, order state machine | MVP | Highest | 4 | SHOP-036 |
 | SHOP-038 | Order history, simulated tracking timeline, cancellation; profile and addresses | MVP | High | 2 | SHOP-037 |
 | SHOP-039 | End-to-end tests for CW-01 to CW-07 and CW-09; automated accessibility checks | MVP | High | 3 | SHOP-035, SHOP-038 |
 
@@ -370,7 +497,7 @@ Each milestone adds its own criteria below.
   storefront pages; end-to-end suite.
 - **PRD requirements:** FR-AUTH-001 to 008, FR-CAT-001, 005, 007, 008,
   FR-SRCH-001 to 007 (UI), FR-PDP-001 to 003, FR-CMP-001 to 003,
-  FR-CART-001 to 005, FR-WISH-001, 002, FR-CHK-001 to 006,
+  FR-CART-001 to 005, FR-WISH-001, 002, FR-CHK-001 to 003, 005 to 007,
   FR-PAY-001 to 005, FR-ORD-001 to 006, FR-PROF-001, 002, FR-REV-001, 002,
   NFR-SEC-001 to 007, NFR-SEC-015, NFR-SEC-019, NFR-REL-001, 002,
   NFR-USE-001 to 003, NFR-ACC-001, 002, NFR-COMP-001, NFR-LOC-001.
@@ -378,7 +505,7 @@ Each milestone adds its own criteria below.
   (UI); AC-032 for customer pages.
 - **Required tests:** unit tests for password policy, cart totals, order
   state machine and payment simulator; integration tests for sessions and
-  reservations; concurrency test for overselling; API tests including
+  transactional stock updates; concurrency test for overselling; API tests including
   CSRF and authorization failures; end-to-end workflow tests.
 - **Security considerations:** session cookie attributes, CSRF, account
   enumeration, rate limits, object-level authorization, no card inputs,
@@ -438,7 +565,7 @@ Each milestone adds its own criteria below.
 - **Technologies introduced:** background job framework and scheduler
   (UD-04), shared async HTTP client, retry utilities (library or framework
   built-ins), official SDKs of approved data sources (ADV), local mail
-  catcher (UD-15, ADV).
+  catcher (UD-15, ADV); worker service added to Compose.
 - **Scope:** in (MVP): workers, schedules, retries, DLQ, internal SDK,
   Gatekeeper, CSV/JSON import, job administration. ADV: notifications,
   external adapters, price sync, circuit breakers, image ingestion.
@@ -446,8 +573,8 @@ Each milestone adds its own criteria below.
 | ID | Task | Track | Priority | Effort | Depends on |
 |---|---|---|---|---|---|
 | SHOP-051 | ADRs: job runner (UD-04), data sources (UD-03), image storage (UD-09) | MVP | Highest | 1.5 | SHOP-046 |
-| SHOP-052 | Workers and scheduler: persisted job states, idempotent handlers, bounded retries, DLQ, single-run schedules; reservation cleanup job | MVP | Highest | 4 | SHOP-051 |
-| SHOP-053 | Internal SDK and integration layer: ports, shared HTTP client, adapter conventions, mocks, contract test harness | MVP | High | 3 | SHOP-051 |
+| SHOP-052 | Workers and scheduler: persisted job states, idempotent handlers, bounded retries, DLQ, single-run schedules; expired session and stale guest-cart cleanup job | MVP | Highest | 4 | SHOP-051 |
+| SHOP-053 | Internal SDK and integration layer: ports, shared HTTP client, adapter conventions, mocks, contract test harness (follows ADR-0003) | MVP | High | 3 | SHOP-045 |
 | SHOP-054 | Gatekeeper: inbound rate limits, outbound quotas, AI token budgets, fallbacks | MVP | High | 3 | SHOP-053 |
 | SHOP-055 | CSV/JSON import: dry run, validation, idempotent upsert, GTIN/MPN duplicate detection, price history, job history, retry | MVP | Highest | 4 | SHOP-052, SHOP-053 |
 | SHOP-056 | Admin UI for jobs, dead-letter queue and price history | MVP | High | 2 | SHOP-055 |
@@ -509,7 +636,7 @@ Each milestone adds its own criteria below.
 | SHOP-073 | External MCP client access to public catalog tools | ADV | Low | 2 | SHOP-066 |
 | SHOP-074 | Real-provider evaluation run (requires paid API approval) | ADV | Low | 1 | SHOP-069 |
 
-- **Deliverables:** `backend/app/ai/`, MCP tools, assistant UI,
+- **Deliverables:** `backend/app/modules/ai/`, MCP tools, assistant UI,
   `tests/ai/` evaluation suites, AI ADRs.
 - **PRD requirements:** FR-AI-001 to 010, FR-AI-020, FR-AI-021,
   NFR-AI-001 to 005, NFR-AI-010 to 017, NFR-PERF-007, NFR-REL-003,
@@ -531,27 +658,31 @@ Each milestone adds its own criteria below.
 
 ### M7 — Docker, Integration Testing, Security Scanning and Mature CI/CD (MVP Release)
 
-- **Objective:** containerize the full stack, mature the test, security
-  and CI/CD pipelines, measure baseline performance and release the MVP.
-- **Prerequisites:** M6 exit.
-- **Technologies introduced:** production Dockerfiles, Trivy (image and
-  IaC scanning, SBOM), container registry for CI images (selected by ADR;
-  free option preferred), load-testing tool (UD-12), Lighthouse CI.
-- **Scope:** in: containers, full Compose stack, integration and contract
-  suites, CI end-to-end, scanning thresholds, quality gates, performance
-  baseline, security review, release. Out: Kubernetes, cloud.
+- **Objective:** optimize containers for production, mature the test,
+  security and CI/CD pipelines, measure baseline performance, and deliver
+  the Tier 1 portfolio release followed by the MVP release.
+- **Prerequisites:** M6 exit (Tier 1 tasks only for SHOP-123).
+- **Technologies introduced:** production-optimized images (hardened
+  multi-stage builds, minimal bases), Trivy (image and IaC scanning,
+  SBOM), container registry for CI images (selected by ADR; free option
+  preferred), load-testing tool (UD-12), Lighthouse CI.
+- **Scope:** in: production container optimization, full-stack Compose
+  verification, integration and contract suites, CI end-to-end, scanning
+  thresholds, quality gates, performance baseline, security review,
+  releases. Out: Kubernetes, cloud.
 
 | ID | Task | Track | Priority | Effort | Depends on |
 |---|---|---|---|---|---|
-| SHOP-075 | Production Dockerfiles for backend, worker and frontend (multi-stage, non-root, health checks) | MVP | Highest | 2.5 | SHOP-069 |
-| SHOP-076 | Full-stack Docker Compose with profiles; one-command start (frontend, backend, worker, PostgreSQL, Redis, mail catcher, mock AI) | MVP | Highest | 2 | SHOP-075 |
+| SHOP-075 | Production-optimized images for backend, worker and frontend: hardening, minimal bases, non-root, size and build-cache optimization | MVP | Highest | 2.5 | SHOP-069 |
+| SHOP-076 | Full-stack Docker Compose profiles and one-command verification of the complete local stack | MVP | Highest | 2 | SHOP-122 |
 | SHOP-077 | Integration and contract test suite expansion | MVP | High | 3 | SHOP-076 |
 | SHOP-078 | End-to-end tests in CI against the containerized stack | MVP | Highest | 2 | SHOP-076 |
-| SHOP-079 | Security scanning maturity: Trivy image and IaC scans, blocking thresholds, Gitleaks history scan, SBOM | MVP | Highest | 2 | SHOP-075 |
+| SHOP-079 | Security scanning maturity: Trivy image and IaC scans, blocking thresholds, Gitleaks history scan, SBOM | MVP | Highest | 2 | SHOP-122 |
 | SHOP-080 | CI/CD maturity: required checks, branch protection, 80% coverage gate on critical modules, image build and publish from `main`, versioning | MVP | High | 2 | SHOP-078, SHOP-079 |
 | SHOP-081 | Performance baseline on PE-1, Lighthouse CI and accessibility automation | MVP | High | 3 | SHOP-076 |
 | SHOP-082 | Security review against OWASP Top 10 and OWASP Top 10 for LLM Applications; log leakage scan | MVP | Highest | 2 | SHOP-079 |
 | SHOP-083 | MVP release: version tag, release notes, documentation update | MVP | Highest | 1 | SHOP-080, SHOP-081, SHOP-082 |
+| SHOP-123 | Tier 1 essential portfolio release `v0.1.0-portfolio`: release checklist, notes, demo script, README showcase (added in SHOP-003) | MVP | Highest | 0.5 | SHOP-045, SHOP-069, SHOP-076, SHOP-082 |
 
 - **Deliverables:** Dockerfiles, Compose profiles, mature workflows,
   performance report, security review, MVP release.
@@ -754,8 +885,8 @@ and no stage that costs money starts without explicit approval.
 
 | Stage | Milestone | Environment | Gate to enter | Cost | Exit / rollback |
 |---|---|---|---|---|---|
-| L0 | M1–M6 | Native apps plus Compose backing services | — | $0 | n/a |
-| L1 | M7 | Full containerized Compose stack | MVP tests green | $0 | `docker compose down -v` |
+| L0 | M1–M6 | Native apps or basic containers; Compose expanded progressively | — | $0 | `docker compose down` |
+| L1 | M7 | Production-optimized containerized Compose stack | MVP tests green | $0 | `docker compose down -v` (deletes local data) |
 | L2 | M8 | kind with Helm, Argo CD and observability | M7 exit | $0 | Delete kind cluster |
 | L3 | M9 | Terraform written and validated offline; cost analysis | M8 exit | $0 | n/a |
 | L4 | M9 | Budgets, IAM/OIDC, remote state, VPC and ECR | Approved cost estimate and owner approval | Low, mostly usage-based | `terraform destroy` (approval) |
@@ -795,7 +926,8 @@ and no stage that costs money starts without explicit approval.
 | FR-PDP-004, 005 | Price history, related | Backlog | SHOP-118, 119 | — |
 | FR-CART-001 to 005, FR-WISH-001, 002 | Cart, wishlist | M3 | SHOP-036 | AC-010, AC-011 |
 | FR-WISH-003 | Price drop | Backlog | SHOP-118 | — |
-| FR-CHK-001 to 006, FR-PAY-001 to 005 | Checkout, payments | M3 | SHOP-037 | AC-012 to 016 |
+| FR-CHK-001 to 003, 005 to 007, FR-PAY-001 to 005 | Checkout, payments | M3 | SHOP-037 | AC-012 to 016 |
+| FR-CHK-004 | Optional stock reservation | Unscheduled (only if multi-step checkout is introduced) | — | — |
 | FR-PAY-006, FR-ORD-007 | Refunds, tracking automation | Backlog | SHOP-120 | — |
 | FR-ORD-001 to 006 | Orders | M3 | SHOP-037, 038 | AC-017, AC-018 |
 | FR-PROF-001, 002 | Profile | M3 | SHOP-038 | — |
@@ -833,8 +965,8 @@ and no stage that costs money starts without explicit approval.
 | NFR-AI-001 to 005 | AI guardrails | M6 | SHOP-065, 069, 070 | AC-043 |
 | NFR-AI-010 to 017 | AI limits | M6 | SHOP-067 | AC-045 |
 | FR-OPSAI-001 to 009 | DevOps AI | M11 | SHOP-109, 110, 111 | AC-050, AC-051 |
-| FR-DEV-001 | Local stack | M2 (partial), M7 | SHOP-022, 076 | AC-035 |
-| FR-DEV-002 | Dockerfiles | M7 | SHOP-075 | — |
+| FR-DEV-001 | Local stack | M1 (basic), M2, M7 | SHOP-122, 022, 076 | AC-035 |
+| FR-DEV-002 | Dockerfiles | M1 (basic), M7 (production) | SHOP-122, 075 | — |
 | FR-DEV-003 | CI | M1 | SHOP-017 | AC-034 |
 | FR-DEV-004 | E2E in CI | M7 | SHOP-078 | — |
 | FR-DEV-005, 006 | Secrets and dependency scanning | M1, matured M7 | SHOP-018, 079 | AC-034 |
@@ -901,14 +1033,17 @@ and no stage that costs money starts without explicit approval.
   "is blocked by" links after import.
 - Later milestones are imported when their milestone starts, from the task
   tables in section 7, to keep the backlog current.
+- SHOP-122 and SHOP-123 were added in SHOP-003 after the original
+  numbering; import them after SHOP-121 so keys stay aligned. Add a `tier-1`,
+  `tier-2` or `tier-3` label from section 2.2.
 
 ### 10.2 Backlog for M0–M2 (CSV)
 
 ```csv
 Summary,Issue Type,Status,Priority,Fix Version,Labels,Estimate (days),Description
 "SHOP-001 Engineering decisions and PRD",Task,Done,Highest,M0,mvp,1,"Roadmap ID SHOP-001. Depends on: none."
-"SHOP-002 Engineering refinement, Claude rules and roadmap",Task,In Progress,Highest,M0,mvp,1,"Roadmap ID SHOP-002. Depends on: SHOP-001."
-"SHOP-003 Architecture document and initial ADRs",Task,To Do,Highest,M0,mvp,2,"Roadmap ID SHOP-003. Depends on: SHOP-002. ADR-0001 to ADR-0004 and template."
+"SHOP-002 Engineering refinement, Claude rules and roadmap",Task,Done,Highest,M0,mvp,1,"Roadmap ID SHOP-002. Depends on: SHOP-001."
+"SHOP-003 Architecture document, ADRs and delivery tiers",Task,In Progress,Highest,M0,mvp,2,"Roadmap ID SHOP-003. Depends on: SHOP-002. ADR template and ADR-0001 to ADR-0008."
 "SHOP-004 Security documentation and threat model",Task,To Do,High,M0,mvp,1,"Roadmap ID SHOP-004. Depends on: SHOP-003."
 "SHOP-005 Development and contribution guides",Task,To Do,High,M0,mvp,1,"Roadmap ID SHOP-005. Depends on: SHOP-003."
 "SHOP-006 README, DECISIONS index and .env.example skeleton",Task,To Do,High,M0,mvp,0.5,"Roadmap ID SHOP-006. Depends on: SHOP-003, SHOP-005."
@@ -927,7 +1062,7 @@ Summary,Issue Type,Status,Priority,Fix Version,Labels,Estimate (days),Descriptio
 "SHOP-019 Security headers and CORS baseline",Task,To Do,High,M1,mvp,1,"Roadmap ID SHOP-019. Depends on: SHOP-012, SHOP-014."
 "SHOP-020 Local development documentation",Task,To Do,Medium,M1,mvp,0.5,"Roadmap ID SHOP-020. Depends on: SHOP-017."
 "SHOP-021 ADR search implementation and data access",Task,To Do,High,M2,mvp,0.5,"Roadmap ID SHOP-021. Depends on: SHOP-020."
-"SHOP-022 Docker Compose for PostgreSQL",Task,To Do,Highest,M2,mvp,1,"Roadmap ID SHOP-022. Depends on: SHOP-020."
+"SHOP-022 Extend Docker Compose with PostgreSQL",Task,To Do,Highest,M2,mvp,1,"Roadmap ID SHOP-022. Depends on: SHOP-020, SHOP-122."
 "SHOP-023 SQLAlchemy and Alembic migrations",Task,To Do,Highest,M2,mvp,2,"Roadmap ID SHOP-023. Depends on: SHOP-022."
 "SHOP-024 Catalog domain model",Task,To Do,Highest,M2,mvp,3,"Roadmap ID SHOP-024. Depends on: SHOP-021, SHOP-023."
 "SHOP-025 Deterministic demo data seeder",Task,To Do,Highest,M2,mvp,2,"Roadmap ID SHOP-025. Depends on: SHOP-024."
@@ -935,6 +1070,7 @@ Summary,Issue Type,Status,Priority,Fix Version,Labels,Estimate (days),Descriptio
 "SHOP-027 Search and facets API",Task,To Do,High,M2,mvp,3,"Roadmap ID SHOP-027. Depends on: SHOP-021, SHOP-026."
 "SHOP-028 Performance dataset generator",Task,To Do,Medium,M2,mvp,1,"Roadmap ID SHOP-028. Depends on: SHOP-025."
 "SHOP-029 PostgreSQL integration tests in CI",Task,To Do,High,M2,mvp,1,"Roadmap ID SHOP-029. Depends on: SHOP-023."
+"SHOP-122 Basic Dockerfiles and initial Docker Compose",Task,To Do,High,M1,mvp,1,"Roadmap ID SHOP-122 (added in SHOP-003; import after SHOP-121). Depends on: SHOP-010, SHOP-014."
 ```
 
 ## 11. Decision Schedule and Roadmap Risks
@@ -964,6 +1100,7 @@ Summary,Issue Type,Status,Priority,Fix Version,Labels,Estimate (days),Descriptio
 | RR-04 | Local machine resource limits in M8 | Compose and kind profiles; optional observability components |
 | RR-05 | Scope creep from advanced features | Strict tracks; backlog items unscheduled until MVP release |
 | RR-06 | Platform components over-engineered | Reuse frameworks first; ADR for custom code (FR-PLAT-016) |
+| RR-07 | The 6–8 week Tier 1 plan is optimistic | Weekly progress check; week-2 re-estimation; apply de-scoping candidates (section 2.3) before extending the timeline |
 
 ## 12. Roadmap Maintenance
 
