@@ -1,0 +1,95 @@
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+credentials.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.egg-info/
+
+# Node.js and Next.js
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+npm-debug.log*
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Helm generated packages and downloaded dependencies
+deployment/helm/**/*.tgz
+**/charts/*.tgz
+
+# Local cloud configuration
+.aws/
+.kube/
+
+# Docker and local data
+.local-data/
+data/postgres/
+data/redis/
+data/minio/
+
+# Local SQLite data
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.sqlite-journal
+*.db-wal
+*.db-shm
+
+# Claude local configuration
+CLAUDE.local.md
+.claude/settings.local.json
+
+# VS Code personal configuration
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+temp/
+
+# Operating systems
+.DS_Store
+Thumbs.db
+
+# Other IDEs
+.idea/
