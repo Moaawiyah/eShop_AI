@@ -20,7 +20,7 @@ the agent rules below and never overrides `CLAUDE.md`.
 | `.claude/rules/backend.md` | `backend/` |
 | `.claude/rules/frontend.md` | `frontend/` |
 | `.claude/rules/integrations.md` | `backend/app/integrations/`, `backend/app/platform/` |
-| `.claude/rules/ai-mcp.md` | `backend/app/ai/`, `services/ai/`, `tests/ai/` |
+| `.claude/rules/ai-mcp.md` | `backend/app/modules/ai/`, `backend/app/integrations/llm/`, `backend/app/integrations/mcp/`, `services/ai/`, `tests/ai/` |
 | `.claude/rules/devops.md` | `deployment/`, `monitoring/`, `scripts/`, `.github/`, Dockerfiles, Compose files |
 | `.claude/rules/aws-infrastructure.md` | `infrastructure/`, Terraform files |
 

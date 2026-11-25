@@ -1,6 +1,8 @@
 ---
 paths:
-  - "backend/app/ai/**"
+  - "backend/app/modules/ai/**"
+  - "backend/app/integrations/llm/**"
+  - "backend/app/integrations/mcp/**"
   - "services/ai/**"
   - "tests/ai/**"
 ---
@@ -10,8 +12,9 @@ paths:
 PRD references: section 10 (FR-AI, FR-OPSAI, NFR-AI).
 
 ## Architecture
-- AI modules live in `backend/app/ai/`. `services/ai/` stays unused until
-  an ADR approves extraction.
+- AI lives in the `backend/app/modules/ai/` domain module, with LLM and
+  MCP adapters in `backend/app/integrations/`. `services/ai/` stays unused
+  until an ADR approves extraction (ADR-0002).
 - Use LangGraph for orchestration and MCP for tool exposure.
 - Access LLMs only through a provider-independent port. Provider-specific
   code lives only in integration adapters.

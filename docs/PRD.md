@@ -3,9 +3,9 @@
 | Field | Value |
 |---|---|
 | Document | Product Requirements Document (PRD) |
-| Version | 0.2 — Draft |
+| Version | 0.3 — Draft |
 | Status | Draft, pending project owner approval |
-| Jira | SHOP-001, SHOP-002 |
+| Jira | SHOP-001, SHOP-002, SHOP-003 |
 | Milestone | M0 — Project Initialization |
 | Last updated | 2026-11-25 |
 | Owner | Project owner |
@@ -20,6 +20,7 @@
 |---|---|---|---|
 | 0.1 | 2026-11-25 | SHOP-001 | Initial draft |
 | 0.2 | 2026-11-25 | SHOP-002 | Approved password policy; configurable AI limits (2,000-character default); staged demo datasets (50 → 500) plus 10,000-product performance dataset; defined performance test environment and workload; availability-category rule; platform components (section 6.11) |
+| 0.3 | 2026-11-25 | SHOP-003 | Initial checkout uses a single-transaction stock check-and-decrement (FR-CHK-007); stock reservation (FR-CHK-004) becomes optional (`ADV`) |
 
 ## Document Conventions
 
@@ -235,9 +236,10 @@ in sections 10, 11 and 12 respectively.
 | FR-CHK-001 | Only signed-in customers MUST be able to check out. | MVP |
 | FR-CHK-002 | Checkout MUST collect a shipping address (synthetic data permitted) and a simulated shipping method. | MVP |
 | FR-CHK-003 | Checkout MUST revalidate prices and stock on the server before placing the order. | MVP |
-| FR-CHK-004 | Checkout MUST reserve stock for a configurable period and release expired reservations. | MVP |
+| FR-CHK-004 | Checkout MAY reserve stock for a configurable period (releasing expired reservations) only if a multi-step checkout later requires it; the initial single-step checkout does not reserve stock. | ADV |
 | FR-CHK-005 | Order placement MUST be idempotent so repeated submissions do not create duplicate orders or charges. | MVP |
 | FR-CHK-006 | The order summary MUST show item subtotal, simulated shipping and total in USD; tax is not calculated and the UI states this. | MVP |
+| FR-CHK-007 | Order placement MUST check and decrement stock atomically within one database transaction together with order and payment records, so that concurrent checkouts never oversell; a declined simulated payment leaves stock unchanged. | MVP |
 | FR-PAY-001 | Payments MUST be processed by an internal payment simulator; no external payment provider is called. | MVP |
 | FR-PAY-002 | The simulator MUST support deterministic outcomes: approved, declined and processing error. | MVP |
 | FR-PAY-003 | The UI MUST NOT contain inputs for real payment card numbers, CVV or bank details. | MVP |
@@ -312,7 +314,7 @@ framework and infrastructure capabilities before introducing custom code.
 | FR-PLAT-005 | Gatekeeper SHOULD expose usage metrics and current consumption to authorized operators. | ADV |
 | FR-PLAT-006 | **Watchdog:** a component SHOULD aggregate the health of dependencies (database, Redis, workers, schedules, external providers, queue and dead-letter depth), expose status and metrics and raise alerts. It detects and reports only; it MUST NOT remediate autonomously. Basic health endpoints (NFR-OBS-002) are delivered earlier. | ADV |
 | FR-PLAT-007 | **Background workers** MUST execute asynchronous jobs with persisted state and idempotent handlers. | MVP |
-| FR-PLAT-008 | **Scheduled jobs** MUST be declared in configuration, guarantee a single execution per schedule and be disabled by default for external sources (e.g. reservation cleanup, price synchronization, tracking progression). | MVP |
+| FR-PLAT-008 | **Scheduled jobs** MUST be declared in configuration, guarantee a single execution per schedule and be disabled by default for external sources (e.g. expired session and stale guest-cart cleanup, price synchronization, tracking progression). | MVP |
 | FR-PLAT-009 | **Bounded retries** MUST limit attempts and total duration, use exponential back-off with jitter and apply only to transient errors on idempotent operations (implements FR-IMP-018 and NFR-REL-004). | MVP |
 | FR-PLAT-010 | **Circuit breakers** SHOULD protect external providers where failure data justifies them, with documented thresholds (implements FR-IMP-020). | ADV |
 | FR-PLAT-011 | **Audit logging** MUST be provided by a single append-only audit service used by all modules for back-office writes, security events and approvals of AI actions (implements FR-ADM-010 and FR-ADM-011). | MVP |
@@ -379,10 +381,11 @@ sections 13, 14 and 15. AI-specific NFRs are in section 10.6.
 **CW-05 — Cart to simulated checkout** (FR-CART, FR-CHK, FR-PAY)
 1. Customer reviews the cart; system revalidates price and stock.
 2. Customer enters or selects a shipping address and method.
-3. System reserves stock and shows the order summary.
+3. System shows the order summary with revalidated prices and availability.
 4. Customer selects a simulated payment outcome and confirms.
-5. On approval the order becomes `paid` and stock is committed; on decline
-   the order becomes `payment_failed` and the reservation is released.
+5. In one transaction, the system checks stock and runs the simulator. On
+   approval, stock is decremented and the order becomes `paid`; on decline,
+   the order becomes `payment_failed` and stock is unchanged (FR-CHK-007).
 
 **CW-06 — Track an order** (FR-ORD-004, 005)
 1. Customer opens order history and selects an order.
@@ -847,7 +850,7 @@ repeatable check.
 | AC-009 | Comparison accepts four products of one category and rejects a fifth product or a product from another category. | FR-CMP-001 | MVP |
 | AC-010 | Cart totals equal the sum of server-side unit prices × quantities in integer cents; client-supplied prices are ignored. | FR-CART-004 | MVP |
 | AC-011 | A guest cart merges into the customer cart on sign-in with no duplicate lines. | FR-CART-003 | MVP |
-| AC-012 | Checkout with an "approved" simulated payment produces a `paid` order and decrements stock; "declined" produces `payment_failed` and releases the reservation. | FR-CHK; FR-PAY-002 | MVP |
+| AC-012 | Checkout with an "approved" simulated payment produces a `paid` order and decrements stock in the same transaction; "declined" produces `payment_failed` and leaves stock unchanged. | FR-CHK-007; FR-PAY-002 | MVP |
 | AC-013 | No page contains an input for a card number or CVV (automated UI check). | FR-PAY-003 | MVP |
 | AC-014 | Every payment page displays the simulated-payment notice. | FR-PAY-004 | MVP |
 | AC-015 | 50 concurrent purchase attempts for a product with 10 units produce exactly 10 paid orders and zero negative stock. | NFR-REL-001 | MVP |

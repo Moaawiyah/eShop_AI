@@ -27,7 +27,7 @@ Objectives and scope: `docs/PRD.md`. Delivery plan: `docs/ROADMAP.md`.
 | `backend.md` | `backend/` |
 | `frontend.md` | `frontend/` |
 | `integrations.md` | `backend/app/integrations/`, `backend/app/platform/` |
-| `ai-mcp.md` | `backend/app/ai/`, `services/ai/`, `tests/ai/` |
+| `ai-mcp.md` | `backend/app/modules/ai/`, LLM/MCP integrations, `services/ai/`, `tests/ai/` |
 | `devops.md` | `deployment/`, `monitoring/`, `scripts/`, `.github/`, Dockerfiles, Compose files |
 | `aws-infrastructure.md` | `infrastructure/`, Terraform files |
 
