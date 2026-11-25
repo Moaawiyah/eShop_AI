@@ -1,9 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python3 scripts/validate_docs.py *)",
-      "Bash(python3 -m unittest *)",
-      "Bash(python3 -m json.tool *)",
+      "Bash(python3 scripts/validate_docs.py)",
+      "Bash(python3 scripts/validate_docs.py --strict)",
+      "Bash(python3 scripts/validate_docs.py --quiet)",
+      "Bash(python3 scripts/validate_docs.py --strict --quiet)",
+      "Bash(python3 -m unittest discover -s scripts/tests)",
+      "Bash(python3 -m unittest discover -s scripts/tests -v)",
+      "Bash(python3 -m json.tool .claude/settings.json)",
+      "Bash(python3 -m json.tool .vscode/settings.json)",
+      "Bash(python3 -m json.tool .vscode/extensions.json)",
       "Bash(git status *)",
       "Bash(git diff *)",
       "Bash(git log *)",

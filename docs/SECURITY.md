@@ -49,8 +49,8 @@ threat model, and the operational procedures.
 | Human approval required for commits, pushes, cloud access, paid APIs and destructive operations | `CLAUDE.md` section 12 |
 | Security rules always loaded for AI-assisted work | `.claude/rules/security.md` (no `paths:` filter) |
 | Documentation consistency checks, read-only | `scripts/validate_docs.py` |
-| Claude Code permission rules: secret files denied for reading; force pushes, `terraform apply`/`destroy`, cloud CLIs and `sudo` denied; dependency installs, Git history changes, GitHub and Jira writes and database tools require approval; bypass mode disabled (SHOP-007) | `.claude/settings.json` |
-| Deterministic PreToolUse hooks covering forms the rules cannot express (`git -C . push -f`, `sh -c`, `.env.*` variants, credential-shaped content, deletions outside the project); defense in depth, not a sandbox (SHOP-007) | `.claude/hooks/`; `scripts/tests/test_claude_hooks.py` |
+| Claude Code permission rules: secret files denied for reading; force pushes, `terraform apply`/`destroy`, cloud CLIs and `sudo` denied; dependency installs, Git history changes, GitHub and Jira writes and database tools require approval; bypass mode disabled; auto-approved `python3` commands are exact validation commands only (SHOP-007) | `.claude/settings.json` |
+| Deterministic PreToolUse hooks covering forms the rules cannot express (`git -C . push -f`, `sh -c`, heredocs and stdin fed to shells, wrapper options, `$(...)`, credential-shaped content, deletions outside the project); any command naming a secret file is denied unless it only handles the name, with case-insensitive matching and symlinks resolved. Defense in depth, not a sandbox: secrets opened by a program's own code (`python3 -c "open('.env')"`), variables or globs expanded at run time, aliases and scripts run from files are not inspected (SHOP-007) | `.claude/hooks/`; `scripts/tests/test_claude_hooks*.py` |
 
 ## 3. Trust Boundaries and Attack Surface
 

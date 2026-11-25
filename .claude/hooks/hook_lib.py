@@ -11,7 +11,7 @@ import json
 import os
 import re
 import sys
-from fnmatch import fnmatch
+from fnmatch import fnmatchcase
 from pathlib import PurePosixPath
 from typing import Any, NoReturn
 
@@ -64,8 +64,12 @@ def project_dir(event: dict[str, Any]) -> str:
 
 
 def is_secret_path(raw: str) -> bool:
-    """True for paths that commonly hold real credentials (examples excluded)."""
-    path = raw.strip().strip("'\"").replace("\\", "/")
+    """True for paths that commonly hold real credentials (examples excluded).
+
+    Matching is case-insensitive: the default macOS file system treats `.ENV`
+    and `.env` as the same file.
+    """
+    path = raw.strip().strip("'\"").replace("\\", "/").lower()
     if not path:
         return False
     pure = PurePosixPath(path)
@@ -86,14 +90,28 @@ def matches_secret_glob(raw: str) -> bool:
 
     Generic globs ('*', '*.*', '**/*.md') are not flagged, to avoid blocking searches.
     """
-    pattern = PurePosixPath(raw.strip().strip("'\"")).name
-    if not any(c in pattern for c in "*?[") or not any(m in pattern.lower() for m in SECRET_MARKERS):
+    pattern = PurePosixPath(raw.strip().strip("'\"")).name.lower()
+    if not any(c in pattern for c in "*?[") or not any(m in pattern for m in SECRET_MARKERS):
         return False
-    return any(fnmatch(sample, pattern) for sample in SECRET_SAMPLES)
+    return any(fnmatchcase(sample, pattern) for sample in SECRET_SAMPLES)
 
 
 def secret_reference(raw: str) -> bool:
     return is_secret_path(raw) or matches_secret_glob(raw)
+
+
+def refers_to_secret(raw: str, cwd: str) -> bool:
+    """True when ``raw`` names a secret path directly or through a symlink.
+
+    Resolving a path only inspects links; no file content is read.
+    """
+    if secret_reference(raw):
+        return True
+    try:
+        resolved = os.path.realpath(os.path.join(cwd, os.path.expanduser(raw.strip("'\""))))
+    except (OSError, ValueError):
+        return False
+    return is_secret_path(resolved)
 
 
 def find_secret_content(text: str) -> str | None:

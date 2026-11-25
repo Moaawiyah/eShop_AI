@@ -2,19 +2,21 @@
 """PreToolUse hook for file tools: protect secret files and block credential writes.
 
 - Denies Read/Edit/Write/NotebookEdit/Grep/Glob on secret paths, including
-  `.env.*` variants that permission rules cannot express (examples are allowed).
+  `.env.*` variants, other letter cases and symlinks that permission rules
+  cannot express (examples are allowed).
 - Denies writes whose new content contains a high-confidence credential format.
   The reason names the kind of credential, never the value.
 """
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from hook_lib import decide, find_secret_content, read_event, secret_reference  # noqa: E402
+from hook_lib import decide, find_secret_content, read_event, refers_to_secret  # noqa: E402
 
 PATH_FIELDS = ("file_path", "notebook_path", "path", "glob")
 
@@ -32,9 +34,10 @@ def main() -> int:
     tool_input = event.get("tool_input")
     if not isinstance(tool_input, dict):
         return 0
+    cwd = str(event.get("cwd") or os.getcwd())
     for field in PATH_FIELDS:
         value = tool_input.get(field)
-        if isinstance(value, str) and secret_reference(value):
+        if isinstance(value, str) and refers_to_secret(value, cwd):
             decide("PreToolUse", "deny",
                    "Access to secret files is blocked by project policy; "
                    "use .env.example for documented placeholders.")

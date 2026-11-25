@@ -11,19 +11,21 @@ import re
 import tempfile
 from collections.abc import Callable
 
-from hook_lib import secret_reference
+from hook_lib import refers_to_secret
 
 Verdict = tuple[str, str]
 POLICY = "project policy (CLAUDE.md section 12)"
+SECRET_READ = "Reading or copying secret files is blocked; document settings in .env.example."
 CLOUD_CLIS = {"aws", "gcloud", "gsutil", "az", "eksctl", "pulumi", "doctl"}
-READERS = {"cat", "less", "more", "head", "tail", "bat", "nl", "strings", "xxd", "od",
-           "hexdump", "base64", "source", ".", "grep", "egrep", "fgrep", "rg", "ag", "awk",
-           "sed", "cut", "sort", "uniq", "diff", "cmp", "jq", "yq", "open", "code", "vi",
-           "vim", "nano", "emacs"}
+DELETERS = {"rm", "rmdir", "unlink", "shred"}
+# Programs that may name a secret file without reading its content. Every other
+# program naming one is denied: listing all readers (interpreters, json.tool,
+# pagers, editors, archivers) is impossible, so the default is deny.
+NAME_ONLY = {"ls", "test", "[", "stat", "file", "touch", "chmod", "mkdir", "echo", "printf",
+             "git", "find", "which", "type", "basename", "dirname", *DELETERS}
+FIND_EXEC = {"-exec", "-execdir", "-ok", "-okdir"}
 PATTERN_FIRST = {"grep", "egrep", "fgrep", "rg", "ag", "awk", "sed"}
 COPIERS = {"cp", "mv", "scp", "rsync"}
-ARCHIVERS = {"tar", "zip", "gzip", "7z"}
-DELETERS = {"rm", "rmdir", "unlink", "shred"}
 GIT_VALUE_OPTIONS = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--exec-path"}
 TEMP_ROOTS = tuple({os.path.realpath(p) for p in
                     (tempfile.gettempdir(), "/tmp", "/private/tmp", "/var/folders")})
@@ -48,7 +50,7 @@ def check_git(program: str, args: list[str], cwd: str, project: str) -> Verdict 
     if not rest:
         return None
     sub, rest = rest[0], rest[1:]
-    flags = _short_flags(rest)
+    flags, positionals = _short_flags(rest), _positionals(rest)
     if sub == "push" and ("f" in flags or any(a == "--mirror" or a.startswith(("--force", "+"))
                                               for a in rest)):
         return "deny", f"Force pushes are blocked by {POLICY}."
@@ -63,10 +65,17 @@ def check_git(program: str, args: list[str], cwd: str, project: str) -> Verdict 
             or (sub in ("checkout", "restore") and {"--", "."} & set(rest)
                 and "--staged" not in rest)):
         return "ask", "This Git command can discard uncommitted work; owner approval required."
-    if sub == "add" and any(secret_reference(a) for a in _positionals(rest)):
+    if sub == "add" and any(refers_to_secret(a, cwd) for a in positionals):
         return "deny", "Staging a secret file is blocked; secrets stay in git-ignored files."
-    if sub == "add" and ("--force" in rest or "f" in _short_flags(rest)):
+    if sub == "add" and ("--force" in rest or "f" in flags):
         return "ask", "Force-adding git-ignored files requires approval (they may be secrets)."
+    if sub in ("diff", "grep") and "--no-index" in rest:
+        if any(refers_to_secret(a, cwd) for a in positionals):
+            return "deny", SECRET_READ
+        return "ask", "git --no-index reads files outside version control; confirm the paths."
+    if sub in ("show", "cat-file") and any(
+            ":" in a and refers_to_secret(a.split(":", 1)[1], cwd) for a in positionals):
+        return "deny", SECRET_READ
     if sub in ("diff", "log", "show") and any(a.startswith("--output") for a in rest):
         return "ask", "git --output writes files; confirm the destination."
     return None
@@ -93,23 +102,21 @@ def check_cloud(program: str, args: list[str], cwd: str, project: str) -> Verdic
 
 
 def check_secret_reads(program: str, args: list[str], cwd: str, project: str) -> Verdict | None:
-    reason = "Reading or copying secret files is blocked; document settings in .env.example."
-    if program in READERS:
-        candidates = _positionals(args)
-        if program in PATTERN_FIRST and not {"-e", "-f", "--regexp", "--file"} & set(args):
-            candidates = candidates[1:]
-    elif program in COPIERS:
-        candidates = _positionals(args)[:-1]
-    elif program in ARCHIVERS:
-        candidates = _positionals(args)
-    elif program in ("curl", "wget"):
+    """Deny any command naming a secret file unless it only handles the name."""
+    if program in ("curl", "wget"):
         candidates = [m for a in args for m in re.findall(r"@([^\s;&|]+)", a)]
         candidates += [args[i + 1] for i, a in enumerate(args[:-1])
                        if a in ("-T", "--upload-file", "--post-file", "--body-file")]
-    else:
+    elif program in NAME_ONLY and not (program == "find" and FIND_EXEC & set(args)):
         return None
-    if any(secret_reference(c) for c in candidates):
-        return "deny", reason
+    elif program in COPIERS:
+        candidates = _positionals(args)[:-1]  # copying an example to .env is allowed
+    else:
+        candidates = _positionals(args)
+        if program in PATTERN_FIRST and not {"-e", "-f", "--regexp", "--file"} & set(args):
+            candidates = candidates[1:]  # the search pattern may mention .env
+    if any(refers_to_secret(c, cwd) for c in candidates):
+        return "deny", SECRET_READ
     return None
 
 
@@ -138,7 +145,8 @@ def check_deletions(program: str, args: list[str], cwd: str, project: str) -> Ve
         if _inside(root, resolved):
             return "deny", "Deleting the project directory or one of its parents is blocked."
         if _inside(resolved, root):
-            if ".git" in os.path.relpath(resolved, root).split(os.sep):
+            parts = os.path.relpath(resolved, root).lower().split(os.sep)
+            if ".git" in parts:  # case-insensitive: macOS treats .GIT as .git
                 return "deny", "Deleting Git metadata is blocked."
             continue
         if not any(_inside(resolved, tmp) for tmp in TEMP_ROOTS):
