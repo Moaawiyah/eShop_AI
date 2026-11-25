@@ -83,8 +83,10 @@ A pull request is ready for review when:
 - [ ] The Task Completion Report (`CLAUDE.md` section 9) is attached or
       included.
 
-Required CI checks and branch protection are introduced in M1
-(SHOP-017, SHOP-018) and enforced in M7 (SHOP-080).
+A repository ruleset protects `main` (SHOP-008): changes arrive through pull requests,
+and force pushes and deletion are blocked. No external approval is required
+(solo project; the owner reviews every pull request). Required CI checks are
+introduced in M1 (SHOP-017, SHOP-018) and enforced in M7 (SHOP-080).
 
 ## 5. Code Review
 
@@ -155,6 +157,39 @@ responsible for every change.
 - Never share secrets, real personal data or `.env` contents with an
   assistant; use synthetic data.
 - Plugins, skills and hooks never override `CLAUDE.md` section 12.
+- Shared Claude Code permission rules and hooks live in `.claude/settings.json`
+  and `.claude/hooks/` (SHOP-007). They are defense in depth, not a sandbox:
+  approval prompts still require human judgment. Personal rules saved by
+  "Yes, and don't ask again" go to the git-ignored
+  `.claude/settings.local.json`; never use it to weaken the shared deny rules.
+- Hooks stay deterministic and fast: no LLM or network calls, no commits,
+  pushes or deployments, and no full test runs after each edit. Every hook
+  change needs tests in `scripts/tests/test_claude_hooks.py`.
+
+### 10.1 Task Workflow with Project Skills and Agents
+
+Project skills live in `.claude/skills/` and subagents in `.claude/agents/`
+(SHOP-124); `scripts/validate_docs.py` checks their configuration. A typical
+task uses only the steps it needs:
+
+1. Plan the task: `/plan-task SHOP-NNN`.
+2. Obtain the owner's approval of the plan and of any `CLAUDE.md`
+   section 12 action.
+3. Implement: `/implement-task SHOP-NNN`.
+4. Run targeted validation: `/validate-project <component>`.
+5. Review when the change is large or risky: `/review-changes`, and the
+   `security-reviewer` or `qa-engineer` agent for security-sensitive or
+   high-risk work.
+6. Prepare the commit: `/prepare-commit SHOP-NNN`.
+7. Obtain approval before committing or pushing; the owner runs or approves
+   the commands.
+8. Update the task status in Jira and `docs/ROADMAP.md`.
+
+One implementation agent is normally enough; independent reviewers are added
+only when complexity or risk justifies them. `/milestone-review`,
+`/security-audit` and `/create-adr` are used at milestone ends or when a
+decision arises. Skills that change files or review broadly run only when
+invoked manually.
 
 ## 11. Human Approval for Sensitive Operations
 

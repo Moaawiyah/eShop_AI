@@ -96,7 +96,7 @@ are promoted across environments; differences are configuration only.
 | **Advanced** (Tier 2) | Imports and background jobs, mature CI/CD, Kubernetes and GitOps, observability, cost-approved AWS staging, DevOps AI | Later releases |
 | **Optional** (Tier 3) | MFA, session management, price synchronization, circuit breakers, real-provider AI evaluation, advanced commerce features | As time permits |
 
-Milestones M0 to M11, the 123-task backlog and estimates are in the
+Milestones M0 to M11, the 125-task backlog and estimates are in the
 [Roadmap](docs/ROADMAP.md).
 
 ## Repository Structure
@@ -124,7 +124,7 @@ Available now:
 
 ```bash
 python3 scripts/validate_docs.py --strict          # documentation consistency checks
-python3 -m unittest discover -s scripts/tests -v   # validator self-tests
+python3 -m unittest discover -s scripts/tests -v   # validator and hook self-tests
 git check-ignore -v .env                            # confirms local secrets are ignored
 ```
 
@@ -163,4 +163,4 @@ change is reviewed by the project owner, including AI-assisted work. See
 
 ## License
 
-No license has been chosen yet; until one is added, all rights are reserved.
+Released under the [MIT License](LICENSE).

@@ -176,9 +176,9 @@ committed files for personal convenience.
 | Purpose | Command (run from) | Availability |
 |---|---|---|
 | Validate documentation | `python3 scripts/validate_docs.py` (root) | **Available now** |
-| Validator self-tests | `python3 -m unittest discover -s scripts/tests` (root) | **Available now** |
+| Validator and Claude hook self-tests | `python3 -m unittest discover -s scripts/tests` (root) | **Available now** |
 | Check ignore rules | `git check-ignore -v .env` (root) | **Available now** |
-| Validate JSON configuration | `python3 -m json.tool .vscode/settings.json` (root) | **Available now** |
+| Validate JSON configuration | `python3 -m json.tool .vscode/settings.json` and `.claude/settings.json` (root) | **Available now** |
 | Install backend dependencies | `uv sync` (`backend/`) | M1 (SHOP-010) |
 | Run the backend with reload | `uv run fastapi dev` or the equivalent defined in SHOP-010 (`backend/`) | M1 |
 | Backend tests | `uv run pytest` (`backend/`) | M1 (SHOP-011) |

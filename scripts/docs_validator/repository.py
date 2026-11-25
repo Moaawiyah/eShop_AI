@@ -6,6 +6,7 @@ import json
 import re
 from pathlib import Path
 
+from .claude_config import claude_markdown_files
 from .core import ADR_REFERENCE, PRD_REFERENCE, TASK_REFERENCE, Context
 
 REQUIRED_DOCS = ("README.md", "AGENTS.md", "CONTRIBUTING.md", "docs/PRD.md",
@@ -19,7 +20,7 @@ ENV_LINE = re.compile(r"^([A-Z][A-Z0-9_]*)=(.*)$")
 
 def _markdown_files(ctx: Context) -> list[Path]:
     roots = [*ctx.root.glob("*.md"), *(ctx.root / "docs").rglob("*.md"),
-             *(ctx.root / ".claude/rules").glob("*.md")]
+             *(ctx.root / ".claude/rules").glob("*.md"), *claude_markdown_files(ctx.root)]
     return sorted(set(roots))
 
 
@@ -76,7 +77,8 @@ def check_rule_frontmatter(ctx: Context) -> None:
 
 
 def check_json_config(ctx: Context) -> None:
-    for path in sorted((ctx.root / ".vscode").glob("*.json")):
+    for path in sorted([*(ctx.root / ".vscode").glob("*.json"),
+                        *(ctx.root / ".claude").glob("settings.json")]):
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
@@ -109,7 +111,8 @@ def check_env_example(ctx: Context) -> None:
 
 
 def check_personal_paths(ctx: Context) -> None:
-    files = [*_markdown_files(ctx), *(ctx.root / ".vscode").glob("*.json")]
+    files = [*_markdown_files(ctx), *(ctx.root / ".vscode").glob("*.json"),
+             *(ctx.root / ".claude").glob("settings.json"), *(ctx.root / ".claude/hooks").glob("*.py")]
     if ctx.exists(".env.example"):
         files.append(ctx.root / ".env.example")
     for path in files:

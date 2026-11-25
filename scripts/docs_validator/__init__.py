@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from pathlib import Path
 
-from . import architecture_adrs, prd_roadmap, repository, tiers
+from . import architecture_adrs, claude_config, prd_roadmap, repository, tiers
 from .core import Context, ParseError, Report
 
 Check = Callable[[Context], None]
@@ -28,6 +28,8 @@ CHECKS: tuple[tuple[str, Check], ...] = (
     ("JSON configuration", repository.check_json_config),
     (".env.example", repository.check_env_example),
     ("personal paths", repository.check_personal_paths),
+    ("Claude agents", claude_config.check_agents),
+    ("Claude skills", claude_config.check_skills),
 )
 
 

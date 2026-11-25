@@ -33,7 +33,7 @@ they are made.
 | UD-08 | Session store | SHOP-030 |
 | UD-09 | Object storage for images | SHOP-051 (local), SHOP-093 (cloud) |
 | UD-10 | MCP transport and external exposure | SHOP-064 |
-| UD-11 | Repository visibility | SHOP-008 |
+| UD-11 | Repository visibility | Public, verified 2026-11-25 (SHOP-006); recorded in SHOP-008 |
 | UD-12 | Load-testing and end-to-end testing tools | SHOP-030 (end-to-end), M7 (load testing) |
 | UD-13 | Feature flag implementation | SHOP-016 |
 | UD-14 | OpenAPI-to-TypeScript generator | SHOP-015 |
