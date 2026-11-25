@@ -49,6 +49,8 @@ threat model, and the operational procedures.
 | Human approval required for commits, pushes, cloud access, paid APIs and destructive operations | `CLAUDE.md` section 12 |
 | Security rules always loaded for AI-assisted work | `.claude/rules/security.md` (no `paths:` filter) |
 | Documentation consistency checks, read-only | `scripts/validate_docs.py` |
+| Claude Code permission rules: secret files denied for reading; force pushes, `terraform apply`/`destroy`, cloud CLIs and `sudo` denied; dependency installs, Git history changes, GitHub and Jira writes and database tools require approval; bypass mode disabled (SHOP-007) | `.claude/settings.json` |
+| Deterministic PreToolUse hooks covering forms the rules cannot express (`git -C . push -f`, `sh -c`, `.env.*` variants, credential-shaped content, deletions outside the project); defense in depth, not a sandbox (SHOP-007) | `.claude/hooks/`; `scripts/tests/test_claude_hooks.py` |
 
 ## 3. Trust Boundaries and Attack Surface
 
@@ -401,8 +403,8 @@ eShop_AI is an educational, non-commercial portfolio project with
 synthetic data and simulated payments. Reports are still welcome.
 
 - Report privately using GitHub's **private vulnerability reporting**
-  ("Report a vulnerability" on the repository's Security tab) once it is
-  enabled during repository setup (SHOP-008). Until then, contact the
+  ("Report a vulnerability" on the repository's Security tab), enabled
+  in SHOP-008. If it is unavailable, contact the
   repository owner through their GitHub profile.
 - Do **not** open public issues for vulnerabilities, and do not test
   against any deployment you do not own.

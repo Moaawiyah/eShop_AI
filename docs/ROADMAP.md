@@ -5,13 +5,14 @@
 | Document | Implementation Roadmap |
 | Version | 0.2 — Draft |
 | Status | Draft, pending project owner approval |
-| Jira | SHOP-002, SHOP-003, SHOP-004, SHOP-006 |
+| Jira | SHOP-002, SHOP-003, SHOP-004, SHOP-006, SHOP-007, SHOP-008, SHOP-124 |
 | Current milestone | M0 — Project Initialization |
 | Last updated | 2026-11-25 |
 | Related | `docs/PRD.md` v0.3, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `CLAUDE.md`, `.claude/rules/` |
 
 > **Implementation status:** only M0 documentation work has been performed
-> (SHOP-001 to SHOP-005 complete, SHOP-006 in progress). Everything else
+> (SHOP-001 to SHOP-007 and SHOP-124 complete, SHOP-008 in progress, SHOP-125
+> deferred). Everything else
 > in this roadmap is **planned**.
 
 ## 1. How to Read This Roadmap
@@ -50,7 +51,7 @@
 
 | Milestone | Track | MVP days | ADV days | Buffered total | Full-time weeks | Part-time weeks |
 |---|---|---|---|---|---|---|
-| M0 Foundations | MVP | 8 | — | 10 | 2.5 | 5 |
+| M0 Foundations | MVP | 9.5 | — | 11.9 | 3 | 5.9 |
 | M1 App foundations, basic CI | MVP | 14.5 | — | 18.1 | 4.5 | 9.1 |
 | M2 Database and catalog | MVP | 15.5 | — | 19.4 | 4.8 | 9.7 |
 | M3 Storefront and checkout | MVP | 25 | — | 31.3 | 7.8 | 15.6 |
@@ -63,7 +64,7 @@
 | M10 AWS deployment | ADV | — | 20.5 | 30.8 | 7.7 | 15.4 |
 | M11 DevOps AI and portfolio | ADV | — | 17 | 21.3 | 5.3 | 10.6 |
 | Advanced commerce backlog | ADV | — | 9 | 11.3 | 2.8 | 5.6 |
-| **Total** | | **136.5** | **112.5** | **≈ 325** | **≈ 81** | **≈ 163** |
+| **Total** | | **138** | **112.5** | **≈ 327** | **≈ 82** | **≈ 164** |
 
 These full-scope figures are conservative, ideal-day estimates for every
 task. The **full scope is not required for the first portfolio release**;
@@ -83,7 +84,7 @@ exactly one tier):
 
 | Milestone | Tier 1 — Essential | Tier 2 — Advanced | Tier 3 — Optional |
 |---|---|---|---|
-| M0 | 001, 002, 003, 004, 005, 006, 007, 008, 009 | — | — |
+| M0 | 001, 002, 003, 004, 005, 006, 007, 008, 009, 124, 125 | — | — |
 | M1 | 010, 011, 012, 013, 014, 015, 016, 017, 018, 019, 020, 122 | — | — |
 | M2 | 021, 022, 023, 024, 025, 026, 027, 029 | 028 | — |
 | M3 | 030, 031, 032, 033, 034, 035, 036, 037, 038, 039 | — | — |
@@ -102,13 +103,13 @@ Tier 1 or Tier 2 tasks (verified by the documentation validation script).
 
 ### 2.3 Essential Portfolio Release Plan (Tier 1)
 
-**Target:** 8 weeks full-time (≈ 40 AI-assisted ideal days). A 6-week
+**Target:** 8 weeks full-time (≈ 41 AI-assisted ideal days). A 6-week
 delivery is possible only if M1 velocity is at least 30% higher than
 assumed or if the de-scoping candidates below are applied.
 
 | Week | Focus | Tier 1 tasks | AI-assisted days |
 |---|---|---|---|
-| 1 | Finish M0; start M1 | 003–009; 010–013 | 5 |
+| 1 | Finish M0; start M1 | 003–009, 124, 125; 010–013 | 5.75 |
 | 2 | Finish M1 (incl. basic containers); start M2 | 014–020, 122; 021, 022 | 4.5 |
 | 3 | Finish M2 | 023–027, 029 | 5.25 |
 | 4 | M3 identity, storefront and product pages | 030–035 | 5.25 |
@@ -116,9 +117,9 @@ assumed or if the de-scoping candidates below are applied.
 | 6 | M4 back office | 040–045 | 5.25 |
 | 7 | M5 SDK and Gatekeeper; M6 foundations | 053, 054; 064–066; start 067 | 5 |
 | 8 | Finish M6; Tier 1 M7; release | 067–069; 076, 079, 082, 123 | 5.5 |
-| | **Total** | | **40.25** |
+| | **Total** | | **41** |
 
-Per-milestone Tier 1 AI-assisted estimates (ideal days): M0 3.25 · M1 5.75
+Per-milestone Tier 1 AI-assisted estimates (ideal days): M0 4 · M1 5.75
 · M2 5.75 · M3 9.75 · M4 5.25 · M5 2 · M6 6.25 · M7 2.25.
 
 **AI-assisted estimate basis:** Claude Code generates most boilerplate,
@@ -178,6 +179,7 @@ SHOP-036, −0.5).
 | AWS container platform decision deferred until cost evaluation | ADR-0006, UD-01, SHOP-093 |
 | Basic Dockerfiles in M1, Compose expanded progressively, production optimization in M7 | ADR-0008, SHOP-122, SHOP-075 |
 | No stock reservation for the initial checkout; transactional stock decrement | FR-CHK-007, ARCHITECTURE section 7.5 |
+| Development MCP servers and additional Claude plugins deferred until a development task requires them; M0 exit does not depend on them (2026-11-25) | SHOP-125 |
 
 ## 3. Milestone Overview
 
@@ -344,13 +346,17 @@ Each milestone adds its own criteria below.
 | SHOP-003 | Architecture document, ADR template, ADR-0001 to ADR-0008 and roadmap delivery tiers | MVP | Highest | 2 | SHOP-002 | Done |
 | SHOP-004 | Security, development and contribution baseline: `SECURITY.md` (threat model), `DEVELOPMENT.md`, `CONTRIBUTING.md`, `.env.example`, VS Code settings and recommendations, reusable documentation validator (`scripts/validate_docs.py`); scope merged with SHOP-005 and parts of SHOP-006 and SHOP-007 | MVP | High | 1 | SHOP-003 | Done |
 | SHOP-005 | Development and contribution guides (`DEVELOPMENT.md`, `CONTRIBUTING.md`) — delivered in SHOP-004 | MVP | High | 1 | SHOP-003 | Done (in SHOP-004) |
-| SHOP-006 | `README.md` (the `DECISIONS.md` index was delivered in SHOP-003 and `.env.example` in SHOP-004) | MVP | High | 0.5 | SHOP-003, SHOP-005 | In progress |
-| SHOP-007 | Repository conventions: placeholder READMEs for empty directories, `.editorconfig`, `.gitattributes`, Claude permission deny rules (VS Code files delivered in SHOP-004) | MVP | Medium | 0.5 | SHOP-005 | Planned |
-| SHOP-008 | GitHub repository setup: visibility decision (UD-11), branch protection plan, initial commit and push (approval required) | MVP | High | 0.5 | SHOP-006, SHOP-007 | Planned |
+| SHOP-006 | `README.md` (the `DECISIONS.md` index was delivered in SHOP-003 and `.env.example` in SHOP-004) | MVP | High | 0.5 | SHOP-003, SHOP-005 | Done |
+| SHOP-007 | Claude Code safeguards and repository conventions: project permission rules (allow, ask, deny), lightweight deterministic hooks in `.claude/hooks/`, plugin scope review, placeholder READMEs for empty directories, `.editorconfig`, `.gitattributes` (VS Code files delivered in SHOP-004) | MVP | High | 1 | SHOP-005 | Done (runtime safeguards verified 2026-11-25) |
+| SHOP-008 | GitHub repository setup: record visibility (UD-11; public, verified in SHOP-006), MIT `LICENSE`, `main` ruleset (pull requests, no force pushes or deletion, no required approvals; required CI checks deferred to M1), private vulnerability reporting, Dependabot alerts, review of the merged Claude GitHub Actions workflows (approval required) | MVP | High | 0.5 | SHOP-006, SHOP-007 | In progress (repository settings applied 2026-11-25; pull request merge pending) |
 | SHOP-009 | Jira project setup and backlog import (section 10) | MVP | Medium | 0.5 | SHOP-002 | Planned |
+| SHOP-124 | Project-specific Claude skills and subagents in `.claude/skills/` and `.claude/agents/`, only where they provide measurable value (added in SHOP-007) | MVP | Medium | 0.5 | SHOP-007 | Done |
+| SHOP-125 | Claude Code development MCP configuration (`.mcp.json`): servers, scopes, credentials handling and permission rules; external services only with approval (added in SHOP-007) | MVP | Medium | 0.5 | SHOP-007 | Deferred until a development task requires it (section 2.4); not an M0 exit requirement |
 
 - **Deliverables:** PRD, ROADMAP, ARCHITECTURE, SECURITY, DEVELOPMENT,
-  CONTRIBUTING, README, DECISIONS, ADR-0001 to ADR-0008, rules, repository.
+  CONTRIBUTING, README, DECISIONS, ADR-0001 to ADR-0008, rules, Claude
+  Code permissions, hooks, skills and subagents, repository and `LICENSE`.
+  MCP configuration (SHOP-125) is deferred.
 - **PRD requirements:** NFR-DOC-001, NFR-SEC-013, NFR-PORT-002 (skeleton).
 - **Acceptance criteria:**
   - All documents required by `CLAUDE.md` section 13 exist, are non-empty
@@ -366,8 +372,9 @@ Each milestone adds its own criteria below.
   verified; Claude permission deny rules for high-risk commands.
 - **Cost considerations:** zero; GitHub and Jira free tiers.
 - **Definition of Done (additional):** owner review of every document.
-- **Exit criteria:** the project owner approves the M0 documents and
-  approves the start of M1.
+- **Exit criteria:** SHOP-001 to SHOP-009 and SHOP-124 are done
+  (SHOP-125 is deferred and does not block exit); the project owner
+  approves the M0 documents and approves the start of M1.
 
 ### M1 — Frontend and Backend Foundations, Local Development and Basic CI
 
@@ -1035,8 +1042,9 @@ and no stage that costs money starts without explicit approval.
   "is blocked by" links after import.
 - Later milestones are imported when their milestone starts, from the task
   tables in section 7, to keep the backlog current.
-- SHOP-122 and SHOP-123 were added in SHOP-003 after the original
-  numbering; import them after SHOP-121 so keys stay aligned. Add a `tier-1`,
+- SHOP-122 and SHOP-123 were added in SHOP-003, and SHOP-124 and SHOP-125
+  in SHOP-007, after the original numbering; import them after SHOP-121 in
+  numeric order so keys stay aligned. Add a `tier-1`,
   `tier-2` or `tier-3` label from section 2.2.
 
 ### 10.2 Backlog for M0–M2 (CSV)
@@ -1048,9 +1056,9 @@ Summary,Issue Type,Status,Priority,Fix Version,Labels,Estimate (days),Descriptio
 "SHOP-003 Architecture document, ADRs and delivery tiers",Task,Done,Highest,M0,mvp,2,"Roadmap ID SHOP-003. Depends on: SHOP-002. ADR template and ADR-0001 to ADR-0008."
 "SHOP-004 Security, development and contribution baseline",Task,Done,High,M0,mvp,1,"Roadmap ID SHOP-004. Depends on: SHOP-003. Includes SHOP-005 scope, .env.example, VS Code files and the documentation validator."
 "SHOP-005 Development and contribution guides",Task,Done,High,M0,mvp,1,"Roadmap ID SHOP-005. Depends on: SHOP-003. Delivered in SHOP-004."
-"SHOP-006 README",Task,In Progress,High,M0,mvp,0.5,"Roadmap ID SHOP-006. Depends on: SHOP-003, SHOP-005. DECISIONS index done in SHOP-003; .env.example done in SHOP-004."
-"SHOP-007 Repository conventions and Claude permission deny rules",Task,To Do,Medium,M0,mvp,0.5,"Roadmap ID SHOP-007. Depends on: SHOP-005."
-"SHOP-008 GitHub repository setup and initial commit",Task,To Do,High,M0,mvp,0.5,"Roadmap ID SHOP-008. Depends on: SHOP-006, SHOP-007. Push requires approval."
+"SHOP-006 README",Task,Done,High,M0,mvp,0.5,"Roadmap ID SHOP-006. Depends on: SHOP-003, SHOP-005. DECISIONS index done in SHOP-003; .env.example done in SHOP-004."
+"SHOP-007 Claude Code safeguards and repository conventions",Task,Done,High,M0,mvp,1,"Roadmap ID SHOP-007. Depends on: SHOP-005. Permission rules, hooks, plugin scope review, repository conventions."
+"SHOP-008 GitHub repository setup",Task,In Progress,High,M0,mvp,0.5,"Roadmap ID SHOP-008. Depends on: SHOP-006, SHOP-007. Public; MIT license; main ruleset, private vulnerability reporting and Dependabot applied; changes require approval."
 "SHOP-009 Jira project setup and backlog import",Task,To Do,Medium,M0,mvp,0.5,"Roadmap ID SHOP-009. Depends on: SHOP-002."
 "SHOP-010 Backend skeleton",Task,To Do,Highest,M1,mvp,2,"Roadmap ID SHOP-010. Depends on: SHOP-008."
 "SHOP-011 Backend quality tooling",Task,To Do,Highest,M1,mvp,1,"Roadmap ID SHOP-011. Depends on: SHOP-010."
@@ -1073,6 +1081,8 @@ Summary,Issue Type,Status,Priority,Fix Version,Labels,Estimate (days),Descriptio
 "SHOP-028 Performance dataset generator",Task,To Do,Medium,M2,mvp,1,"Roadmap ID SHOP-028. Depends on: SHOP-025."
 "SHOP-029 PostgreSQL integration tests in CI",Task,To Do,High,M2,mvp,1,"Roadmap ID SHOP-029. Depends on: SHOP-023."
 "SHOP-122 Basic Dockerfiles and initial Docker Compose",Task,To Do,High,M1,mvp,1,"Roadmap ID SHOP-122 (added in SHOP-003; import after SHOP-121). Depends on: SHOP-010, SHOP-014."
+"SHOP-124 Project-specific Claude skills and subagents",Task,Done,Medium,M0,mvp,0.5,"Roadmap ID SHOP-124 (added in SHOP-007; import after SHOP-123). Depends on: SHOP-007."
+"SHOP-125 Claude Code development MCP configuration",Task,To Do,Medium,M0,mvp,0.5,"Roadmap ID SHOP-125 (added in SHOP-007; import after SHOP-124). Depends on: SHOP-007. Deferred until a development task requires it; not an M0 exit requirement. External services require approval."
 ```
 
 ## 11. Decision Schedule and Roadmap Risks
