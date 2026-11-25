@@ -1,0 +1,23 @@
+# Normalize text files to LF in the repository and working tree.
+* text=auto eol=lf
+
+# Scripts must keep LF line endings to run in containers and CI.
+*.sh text eol=lf
+*.py text eol=lf
+
+# Binary assets: never normalize or diff as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.zip binary
+*.gz binary
+
+# Generated lockfiles: hide from language statistics and collapse in review.
+uv.lock linguist-generated=true
+package-lock.json linguist-generated=true
