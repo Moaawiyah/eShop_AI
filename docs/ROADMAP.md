@@ -5,13 +5,13 @@
 | Document | Implementation Roadmap |
 | Version | 0.2 — Draft |
 | Status | Draft, pending project owner approval |
-| Jira | SHOP-002, SHOP-003 |
+| Jira | SHOP-002, SHOP-003, SHOP-004, SHOP-006 |
 | Current milestone | M0 — Project Initialization |
 | Last updated | 2026-11-25 |
 | Related | `docs/PRD.md` v0.3, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `CLAUDE.md`, `.claude/rules/` |
 
 > **Implementation status:** only M0 documentation work has been performed
-> (SHOP-001 and SHOP-002 complete, SHOP-003 in progress). Everything else
+> (SHOP-001 to SHOP-005 complete, SHOP-006 in progress). Everything else
 > in this roadmap is **planned**.
 
 ## 1. How to Read This Roadmap
@@ -341,11 +341,11 @@ Each milestone adds its own criteria below.
 |---|---|---|---|---|---|---|
 | SHOP-001 | Engineering decisions and PRD | MVP | Highest | 1 | — | Done |
 | SHOP-002 | Engineering refinement, Claude rules and roadmap | MVP | Highest | 1 | SHOP-001 | Done |
-| SHOP-003 | Architecture document, ADR template, ADR-0001 to ADR-0008 and roadmap delivery tiers | MVP | Highest | 2 | SHOP-002 | In progress |
-| SHOP-004 | Security documentation: threat model and security baseline (`SECURITY.md`) | MVP | High | 1 | SHOP-003 | Planned |
-| SHOP-005 | Development and contribution guides (`DEVELOPMENT.md`, `CONTRIBUTING.md`) | MVP | High | 1 | SHOP-003 | Planned |
-| SHOP-006 | `README.md`, `DECISIONS.md` index and `.env.example` skeleton | MVP | High | 0.5 | SHOP-003, SHOP-005 | Planned |
-| SHOP-007 | Repository conventions: placeholder READMEs for empty directories, `.editorconfig`, `.gitattributes`, VS Code recommendations, Claude permission deny rules | MVP | Medium | 0.5 | SHOP-005 | Planned |
+| SHOP-003 | Architecture document, ADR template, ADR-0001 to ADR-0008 and roadmap delivery tiers | MVP | Highest | 2 | SHOP-002 | Done |
+| SHOP-004 | Security, development and contribution baseline: `SECURITY.md` (threat model), `DEVELOPMENT.md`, `CONTRIBUTING.md`, `.env.example`, VS Code settings and recommendations, reusable documentation validator (`scripts/validate_docs.py`); scope merged with SHOP-005 and parts of SHOP-006 and SHOP-007 | MVP | High | 1 | SHOP-003 | Done |
+| SHOP-005 | Development and contribution guides (`DEVELOPMENT.md`, `CONTRIBUTING.md`) — delivered in SHOP-004 | MVP | High | 1 | SHOP-003 | Done (in SHOP-004) |
+| SHOP-006 | `README.md` (the `DECISIONS.md` index was delivered in SHOP-003 and `.env.example` in SHOP-004) | MVP | High | 0.5 | SHOP-003, SHOP-005 | In progress |
+| SHOP-007 | Repository conventions: placeholder READMEs for empty directories, `.editorconfig`, `.gitattributes`, Claude permission deny rules (VS Code files delivered in SHOP-004) | MVP | Medium | 0.5 | SHOP-005 | Planned |
 | SHOP-008 | GitHub repository setup: visibility decision (UD-11), branch protection plan, initial commit and push (approval required) | MVP | High | 0.5 | SHOP-006, SHOP-007 | Planned |
 | SHOP-009 | Jira project setup and backlog import (section 10) | MVP | Medium | 0.5 | SHOP-002 | Planned |
 
@@ -358,8 +358,10 @@ Each milestone adds its own criteria below.
   - PRD and roadmap IDs are unique (automated grep check).
   - ADR-0001 to ADR-0008 are accepted and indexed.
   - The initial commit is on GitHub with branch protection documented.
-- **Required tests:** documentation consistency checks (ID uniqueness,
-  cross-references, Mermaid syntax review), `git check-ignore` checks.
+- **Required tests:** documentation consistency checks with
+  `python3 scripts/validate_docs.py` and its self-tests (ID uniqueness,
+  cross-references, dependencies, tiers, ADRs, links), Mermaid syntax
+  review, `git check-ignore` checks.
 - **Security considerations:** no secrets in the repository; `.gitignore`
   verified; Claude permission deny rules for high-risk commands.
 - **Cost considerations:** zero; GitHub and Jira free tiers.
@@ -983,7 +985,7 @@ and no stage that costs money starts without explicit approval.
 | NFR-SEC-006, 007 | Validation, encoding | M1 onward | All API and UI tasks | — |
 | NFR-SEC-008 to 010 | Headers, CORS, errors | M1 | SHOP-012, 019 | — |
 | NFR-SEC-011, 012 | Uploads, CSV export | M5 | SHOP-055 | — |
-| NFR-SEC-013 | Secrets | M0, M1 | SHOP-006, 018 | — |
+| NFR-SEC-013 | Secrets | M0, M1 | SHOP-004, 018 | — |
 | NFR-SEC-014 | Log hygiene | M1, verified M7 | SHOP-012, 082 | AC-036 |
 | NFR-SEC-015 | Rate limiting | M3, M5 | SHOP-033, 054 | AC-003 |
 | NFR-SEC-016 | Cloud IAM | M9 | SHOP-094 | — |
@@ -1043,10 +1045,10 @@ and no stage that costs money starts without explicit approval.
 Summary,Issue Type,Status,Priority,Fix Version,Labels,Estimate (days),Description
 "SHOP-001 Engineering decisions and PRD",Task,Done,Highest,M0,mvp,1,"Roadmap ID SHOP-001. Depends on: none."
 "SHOP-002 Engineering refinement, Claude rules and roadmap",Task,Done,Highest,M0,mvp,1,"Roadmap ID SHOP-002. Depends on: SHOP-001."
-"SHOP-003 Architecture document, ADRs and delivery tiers",Task,In Progress,Highest,M0,mvp,2,"Roadmap ID SHOP-003. Depends on: SHOP-002. ADR template and ADR-0001 to ADR-0008."
-"SHOP-004 Security documentation and threat model",Task,To Do,High,M0,mvp,1,"Roadmap ID SHOP-004. Depends on: SHOP-003."
-"SHOP-005 Development and contribution guides",Task,To Do,High,M0,mvp,1,"Roadmap ID SHOP-005. Depends on: SHOP-003."
-"SHOP-006 README, DECISIONS index and .env.example skeleton",Task,To Do,High,M0,mvp,0.5,"Roadmap ID SHOP-006. Depends on: SHOP-003, SHOP-005."
+"SHOP-003 Architecture document, ADRs and delivery tiers",Task,Done,Highest,M0,mvp,2,"Roadmap ID SHOP-003. Depends on: SHOP-002. ADR template and ADR-0001 to ADR-0008."
+"SHOP-004 Security, development and contribution baseline",Task,Done,High,M0,mvp,1,"Roadmap ID SHOP-004. Depends on: SHOP-003. Includes SHOP-005 scope, .env.example, VS Code files and the documentation validator."
+"SHOP-005 Development and contribution guides",Task,Done,High,M0,mvp,1,"Roadmap ID SHOP-005. Depends on: SHOP-003. Delivered in SHOP-004."
+"SHOP-006 README",Task,In Progress,High,M0,mvp,0.5,"Roadmap ID SHOP-006. Depends on: SHOP-003, SHOP-005. DECISIONS index done in SHOP-003; .env.example done in SHOP-004."
 "SHOP-007 Repository conventions and Claude permission deny rules",Task,To Do,Medium,M0,mvp,0.5,"Roadmap ID SHOP-007. Depends on: SHOP-005."
 "SHOP-008 GitHub repository setup and initial commit",Task,To Do,High,M0,mvp,0.5,"Roadmap ID SHOP-008. Depends on: SHOP-006, SHOP-007. Push requires approval."
 "SHOP-009 Jira project setup and backlog import",Task,To Do,Medium,M0,mvp,0.5,"Roadmap ID SHOP-009. Depends on: SHOP-002."
