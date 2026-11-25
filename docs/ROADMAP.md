@@ -11,7 +11,7 @@
 | Related | `docs/PRD.md` v0.3, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `CLAUDE.md`, `.claude/rules/` |
 
 > **Implementation status:** only M0 documentation work has been performed
-> (SHOP-001 to SHOP-007 and SHOP-124 complete, SHOP-008 in progress, SHOP-125
+> (SHOP-001 to SHOP-008 and SHOP-124 complete, SHOP-009 planned, SHOP-125
 > deferred). Everything else
 > in this roadmap is **planned**.
 
@@ -348,7 +348,7 @@ Each milestone adds its own criteria below.
 | SHOP-005 | Development and contribution guides (`DEVELOPMENT.md`, `CONTRIBUTING.md`) — delivered in SHOP-004 | MVP | High | 1 | SHOP-003 | Done (in SHOP-004) |
 | SHOP-006 | `README.md` (the `DECISIONS.md` index was delivered in SHOP-003 and `.env.example` in SHOP-004) | MVP | High | 0.5 | SHOP-003, SHOP-005 | Done |
 | SHOP-007 | Claude Code safeguards and repository conventions: project permission rules (allow, ask, deny), lightweight deterministic hooks in `.claude/hooks/`, plugin scope review, placeholder READMEs for empty directories, `.editorconfig`, `.gitattributes` (VS Code files delivered in SHOP-004) | MVP | High | 1 | SHOP-005 | Done (runtime safeguards verified 2026-11-25) |
-| SHOP-008 | GitHub repository setup: record visibility (UD-11; public, verified in SHOP-006), MIT `LICENSE`, `main` ruleset (pull requests, no force pushes or deletion, no required approvals; required CI checks deferred to M1), private vulnerability reporting, Dependabot alerts, review of the merged Claude GitHub Actions workflows (approval required) | MVP | High | 0.5 | SHOP-006, SHOP-007 | In progress (repository settings applied 2026-11-25; pull request merge pending) |
+| SHOP-008 | GitHub repository setup: record visibility (UD-11; public, verified in SHOP-006), MIT `LICENSE`, `main` ruleset (pull requests, no force pushes or deletion, no required approvals; required CI checks deferred to M1), private vulnerability reporting, Dependabot alerts, review of the merged Claude GitHub Actions workflows (approval required) | MVP | High | 0.5 | SHOP-006, SHOP-007 | Done (settings applied and verified 2026-11-25; PR #3) |
 | SHOP-009 | Jira project setup and backlog import (section 10) | MVP | Medium | 0.5 | SHOP-002 | Planned |
 | SHOP-124 | Project-specific Claude skills and subagents in `.claude/skills/` and `.claude/agents/`, only where they provide measurable value (added in SHOP-007) | MVP | Medium | 0.5 | SHOP-007 | Done |
 | SHOP-125 | Claude Code development MCP configuration (`.mcp.json`): servers, scopes, credentials handling and permission rules; external services only with approval (added in SHOP-007) | MVP | Medium | 0.5 | SHOP-007 | Deferred until a development task requires it (section 2.4); not an M0 exit requirement |
@@ -1058,7 +1058,7 @@ Summary,Issue Type,Status,Priority,Fix Version,Labels,Estimate (days),Descriptio
 "SHOP-005 Development and contribution guides",Task,Done,High,M0,mvp,1,"Roadmap ID SHOP-005. Depends on: SHOP-003. Delivered in SHOP-004."
 "SHOP-006 README",Task,Done,High,M0,mvp,0.5,"Roadmap ID SHOP-006. Depends on: SHOP-003, SHOP-005. DECISIONS index done in SHOP-003; .env.example done in SHOP-004."
 "SHOP-007 Claude Code safeguards and repository conventions",Task,Done,High,M0,mvp,1,"Roadmap ID SHOP-007. Depends on: SHOP-005. Permission rules, hooks, plugin scope review, repository conventions."
-"SHOP-008 GitHub repository setup",Task,In Progress,High,M0,mvp,0.5,"Roadmap ID SHOP-008. Depends on: SHOP-006, SHOP-007. Public; MIT license; main ruleset, private vulnerability reporting and Dependabot applied; changes require approval."
+"SHOP-008 GitHub repository setup",Task,Done,High,M0,mvp,0.5,"Roadmap ID SHOP-008. Depends on: SHOP-006, SHOP-007. Public; MIT license; main ruleset, private vulnerability reporting and Dependabot applied; changes require approval."
 "SHOP-009 Jira project setup and backlog import",Task,To Do,Medium,M0,mvp,0.5,"Roadmap ID SHOP-009. Depends on: SHOP-002."
 "SHOP-010 Backend skeleton",Task,To Do,Highest,M1,mvp,2,"Roadmap ID SHOP-010. Depends on: SHOP-008."
 "SHOP-011 Backend quality tooling",Task,To Do,Highest,M1,mvp,1,"Roadmap ID SHOP-011. Depends on: SHOP-010."
