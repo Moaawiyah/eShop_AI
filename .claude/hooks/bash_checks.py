@@ -1,7 +1,8 @@
 """Individual command checks used by guard_bash.py.
 
 Each check receives (program, args, cwd, project) for one simple command and
-returns (decision, reason) or None. Decisions are 'deny' or 'ask'.
+returns (decision, reason) or None. Decisions are 'deny' or 'ask'. The Git
+check lives in git_checks.py.
 """
 
 from __future__ import annotations
@@ -11,82 +12,30 @@ import re
 import tempfile
 from collections.abc import Callable
 
-from hook_lib import refers_to_secret
+from git_checks import POLICY, SECRET_READ, Verdict, check_git
+from hook_lib import positionals, refers_to_secret
 
-Verdict = tuple[str, str]
-POLICY = "project policy (CLAUDE.md section 12)"
-SECRET_READ = "Reading or copying secret files is blocked; document settings in .env.example."
 CLOUD_CLIS = {"aws", "gcloud", "gsutil", "az", "eksctl", "pulumi", "doctl"}
 DELETERS = {"rm", "rmdir", "unlink", "shred"}
 # Programs that may name a secret file without reading its content. Every other
 # program naming one is denied: listing all readers (interpreters, json.tool,
-# pagers, editors, archivers) is impossible, so the default is deny.
+# pagers, editors, archivers) is impossible, so the default is deny. Git has its
+# own content checks in git_checks.py.
 NAME_ONLY = {"ls", "test", "[", "stat", "file", "touch", "chmod", "mkdir", "echo", "printf",
              "git", "find", "which", "type", "basename", "dirname", *DELETERS}
 FIND_EXEC = {"-exec", "-execdir", "-ok", "-okdir"}
 PATTERN_FIRST = {"grep", "egrep", "fgrep", "rg", "ag", "awk", "sed"}
 COPIERS = {"cp", "mv", "scp", "rsync"}
-GIT_VALUE_OPTIONS = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--exec-path"}
 TEMP_ROOTS = tuple({os.path.realpath(p) for p in
                     (tempfile.gettempdir(), "/tmp", "/private/tmp", "/var/folders")})
-
-
-def _short_flags(args: list[str]) -> str:
-    return "".join(a[1:] for a in args if re.fullmatch(r"-[A-Za-z]+", a))
-
-
-def _positionals(args: list[str]) -> list[str]:
-    return [a for a in args if not a.startswith("-")]
-
-
-def check_git(program: str, args: list[str], cwd: str, project: str) -> Verdict | None:
-    if program != "git":
-        return None
-    rest = list(args)
-    while rest and rest[0].startswith("-"):
-        option = rest.pop(0)
-        if option in GIT_VALUE_OPTIONS and rest:
-            rest.pop(0)
-    if not rest:
-        return None
-    sub, rest = rest[0], rest[1:]
-    flags, positionals = _short_flags(rest), _positionals(rest)
-    if sub == "push" and ("f" in flags or any(a == "--mirror" or a.startswith(("--force", "+"))
-                                              for a in rest)):
-        return "deny", f"Force pushes are blocked by {POLICY}."
-    if sub in ("push", "commit") and ("--no-verify" in rest or (sub == "commit" and "n" in flags)):
-        return "ask", "Skipping Git hooks (--no-verify) requires explicit owner approval."
-    if (sub == "branch" and ("d" in flags.lower() or "--delete" in rest)) or (
-            sub == "push" and ("d" in flags or "--delete" in rest
-                               or any(a.startswith(":") for a in rest))):
-        return "ask", "Deleting branches requires explicit owner approval."
-    if (sub == "clean" or (sub == "reset" and "--hard" in rest)
-            or (sub == "stash" and rest[:1] in (["drop"], ["clear"]))
-            or (sub in ("checkout", "restore") and {"--", "."} & set(rest)
-                and "--staged" not in rest)):
-        return "ask", "This Git command can discard uncommitted work; owner approval required."
-    if sub == "add" and any(refers_to_secret(a, cwd) for a in positionals):
-        return "deny", "Staging a secret file is blocked; secrets stay in git-ignored files."
-    if sub == "add" and ("--force" in rest or "f" in flags):
-        return "ask", "Force-adding git-ignored files requires approval (they may be secrets)."
-    if sub in ("diff", "grep") and "--no-index" in rest:
-        if any(refers_to_secret(a, cwd) for a in positionals):
-            return "deny", SECRET_READ
-        return "ask", "git --no-index reads files outside version control; confirm the paths."
-    if sub in ("show", "cat-file") and any(
-            ":" in a and refers_to_secret(a.split(":", 1)[1], cwd) for a in positionals):
-        return "deny", SECRET_READ
-    if sub in ("diff", "log", "show") and any(a.startswith("--output") for a in rest):
-        return "ask", "git --output writes files; confirm the destination."
-    return None
 
 
 def check_terraform(program: str, args: list[str], cwd: str, project: str) -> Verdict | None:
     if program not in ("terraform", "tofu"):
         return None
-    positionals = _positionals(args)
-    sub = positionals[0] if positionals else ""
-    nxt = positionals[1] if len(positionals) > 1 else ""
+    words = positionals(args)
+    sub = words[0] if words else ""
+    nxt = words[1] if len(words) > 1 else ""
     if sub in ("apply", "destroy", "import", "taint", "untaint", "force-unlock") or (
             sub == "state" and nxt in ("rm", "mv", "push", "replace-provider")):
         return "deny", f"terraform {sub} is blocked during M0 by {POLICY}."
@@ -110,9 +59,9 @@ def check_secret_reads(program: str, args: list[str], cwd: str, project: str) ->
     elif program in NAME_ONLY and not (program == "find" and FIND_EXEC & set(args)):
         return None
     elif program in COPIERS:
-        candidates = _positionals(args)[:-1]  # copying an example to .env is allowed
+        candidates = positionals(args)[:-1]  # copying an example to .env is allowed
     else:
-        candidates = _positionals(args)
+        candidates = positionals(args)
         if program in PATTERN_FIRST and not {"-e", "-f", "--regexp", "--file"} & set(args):
             candidates = candidates[1:]  # the search pattern may mention .env
     if any(refers_to_secret(c, cwd) for c in candidates):

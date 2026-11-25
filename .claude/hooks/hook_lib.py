@@ -63,6 +63,11 @@ def project_dir(event: dict[str, Any]) -> str:
     return os.environ.get("CLAUDE_PROJECT_DIR") or str(event.get("cwd") or os.getcwd())
 
 
+def positionals(args: list[str]) -> list[str]:
+    """Arguments that are not options (do not start with '-')."""
+    return [a for a in args if not a.startswith("-")]
+
+
 def is_secret_path(raw: str) -> bool:
     """True for paths that commonly hold real credentials (examples excluded).
 
