@@ -701,9 +701,16 @@ services need it (section 13).
 
 ### 4.3 Frontend API Client from OpenAPI
 
+**Implemented (SHOP-015, ADR-0010).** Generator: openapi-typescript. Files:
+`backend/scripts/export_openapi.py`, `frontend/src/lib/api/openapi.json`,
+`schema.d.ts` (generated, committed), `client.ts` (isomorphic core),
+`server-client.ts`, `browser-client.ts`, `errors.ts`, `types.ts`. Commands:
+`npm run generate:api` and the drift check `npm run check:api` (CI wiring:
+SHOP-017).
+
 1. FastAPI generates the OpenAPI document with stable operation IDs.
 2. A script exports it to a committed file in the frontend.
-3. A generator (UD-14, decided in SHOP-015) produces TypeScript types.
+3. openapi-typescript (UD-14, ADR-0010) produces TypeScript types.
 4. A thin, hand-written client wraps `fetch` using those types and adds
    credentials, the CSRF header and problem-details error normalization.
 5. CI regenerates the types and fails on any difference (AC-048).
@@ -789,13 +796,20 @@ a separate route group.
 
 ### 6.5 API Client and Same-Origin Access
 
-- **Proposed:** the browser calls `/api/v1/*` on the **same origin** as the
-  frontend. Locally, the Next.js server or Compose routing forwards these
-  requests to the backend; in the cloud, the entry point routes by path
-  (UD-02). This avoids cross-site cookies and broad CORS rules.
+- The browser calls `/api/v1/*` on the **same origin** as the frontend.
+  **Implemented (SHOP-015):** a Next.js route handler
+  (`frontend/src/app/api/v1/[...path]/route.ts`) forwards `/api/v1/*` to
+  `BACKEND_INTERNAL_URL`, read at request time (not `rewrites`, which are
+  fixed at build time in standalone output). It uses header allow-lists in
+  both directions, rejects empty, `.` and `..` segments and answers 502
+  `application/problem+json` when the backend is unreachable. `/health/*` is
+  not exposed. In the cloud, the entry point routes by path (UD-02). This
+  avoids cross-site cookies and broad CORS rules.
 - Server components call the backend's internal URL and forward the
   incoming session cookie only for authenticated pages; public catalog
-  pages are fetched without credentials so they can be cached.
+  pages are fetched without credentials so they can be cached. Cookie
+  forwarding for server calls is deferred to authentication (SHOP-032);
+  today's server client calls public endpoints only.
 - The client attaches the CSRF token header to every state-changing
   request and normalizes problem-details errors.
 

@@ -56,8 +56,13 @@ describe("NavList", () => {
     render(<NavList orientation="horizontal" />);
 
     const links = screen.getAllByRole("link");
-    expect(links).toHaveLength(1);
+    expect(links.map((link) => link.textContent)).toEqual([
+      "Home",
+      "System status",
+    ]);
     expect(links[0]).toHaveAttribute("aria-current", "page");
+    expect(links[1]).not.toHaveAttribute("aria-current");
+    expect(links[1]).toHaveAttribute("href", "/status");
     expect(screen.getByText("AI assistant")).toBeInTheDocument();
   });
 

@@ -217,7 +217,8 @@ committed files for personal convenience.
 | Frontend type check | `npm run typecheck` (`frontend/`) | **Available now** |
 | Frontend tests | `npm test` (`frontend/`; Vitest) | **Available now** |
 | Frontend production build | `npm run build` (`frontend/`; standalone output) | **Available now** |
-| Generate API types | `npm run generate:api` (`frontend/`; generator per UD-14) | M1 (SHOP-015) |
+| Generate API types | `npm run generate:api` (`frontend/`; needs `uv` and `uv sync --locked` in `backend/`) | **Available now** |
+| Check API types for drift | `npm run check:api` (`frontend/`; fails when generated files are stale) | **Available now** |
 | Start containers | `docker compose up --build` (root) | M1 (SHOP-122) |
 | Stop containers | `docker compose down` (root) | M1 |
 | Apply migrations | `uv run alembic upgrade head` (`backend/`) | M2 (SHOP-023) |
@@ -245,9 +246,18 @@ SHOP-020 replaces the M1 rows with the final, verified commands.
 - FastAPI serves the OpenAPI document at `/api/v1/openapi.json` and
   interactive documentation locally (disabled or protected outside local
   development).
-- Frontend types are generated from that document (generator chosen in
-  SHOP-015, UD-14) and committed; CI fails when generated types are out of
-  date. Never hand-write duplicate request or response types.
+- Frontend types are generated from that document (openapi-typescript,
+  ADR-0010) and committed. `npm run generate:api` (`frontend/`) exports the
+  document with `backend/scripts/export_openapi.py` and regenerates
+  `src/lib/api/schema.d.ts`; `npm run check:api` fails when the committed
+  files are stale (CI wiring: SHOP-017). Both need `uv` and the backend
+  environment (`uv sync --locked` in `backend/`); run `unset VIRTUAL_ENV`
+  first if another virtual environment is active. Never hand-write
+  duplicate request or response types.
+- Run both servers natively: `uv run python -m app` in `backend/`, then
+  `npm run dev` in `frontend/`, and open <http://localhost:3000/status>. The
+  frontend reads `BACKEND_INTERNAL_URL` at runtime (default
+  `http://127.0.0.1:8000`) and proxies `/api/v1/*` to it.
 
 ## 12. Debugging and Troubleshooting
 

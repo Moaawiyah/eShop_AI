@@ -1,0 +1,137 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "eShop_AI API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/config/public-flags": {
+      "get": {
+        "tags": [
+          "config"
+        ],
+        "summary": "Public feature flags",
+        "description": "Feature flags the frontend may read; all are off unless configured.",
+        "operationId": "config_public_flags",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicFlagsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/live": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Liveness probe",
+        "description": "The process is running; independent of every dependency.",
+        "operationId": "health_live",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LivenessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Readiness probe",
+        "description": "200 once start-up has finished; 503 before that and during shutdown.",
+        "operationId": "health_ready",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Not started yet or shutting down.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LivenessResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok",
+            "title": "Status"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "LivenessResponse"
+      },
+      "PublicFlagsResponse": {
+        "properties": {
+          "ai_assistant": {
+            "type": "boolean",
+            "title": "Ai Assistant"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "ai_assistant"
+        ],
+        "title": "PublicFlagsResponse",
+        "description": "Must list exactly `PUBLIC_FLAGS` (checked by a test)."
+      },
+      "ReadinessResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "not_ready"
+            ],
+            "title": "Status"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "ReadinessResponse"
+      }
+    }
+  }
+}
