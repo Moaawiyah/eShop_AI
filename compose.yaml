@@ -1,0 +1,56 @@
+# eShop_AI local stack (SHOP-122, basic): backend and frontend.
+# Local development only. Published ports bind to 127.0.0.1.
+# Usage: docker compose up --build -d   (see docs/DEVELOPMENT.md section 7)
+
+services:
+  backend:
+    build:
+      context: ./backend
+    image: eshop-ai-backend:local
+    # Optional: a fresh clone works without .env (defaults apply).
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      # Container-specific values override .env: the app must listen on
+      # 0.0.0.0:8000 inside the container; BACKEND_PORT on the host only
+      # changes the published port.
+      BACKEND_HOST: 0.0.0.0
+      BACKEND_PORT: "8000"
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
+    init: true
+    # SHUTDOWN_TIMEOUT_SECONDS (default 20) plus margin.
+    stop_grace_period: 30s
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  frontend:
+    build:
+      context: ./frontend
+    image: eshop-ai-frontend:local
+    # No env_file: the frontend receives only the variables it needs, so
+    # backend settings and future secrets in .env never reach it.
+    environment:
+      BACKEND_INTERNAL_URL: http://backend:8000
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    init: true
+    stop_grace_period: 15s
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL

@@ -157,8 +157,37 @@ git ls-files .env.example                 # must list the file
 | Full stack | Profiles and one-command verification | M7 (SHOP-076) |
 | Observability | Optional profile, or the kind cluster | M8 |
 
+**Basic stage — implemented (SHOP-122).** `compose.yaml` (repository root) runs:
+
+- `backend` (`eshop-ai-backend:local`, port 8000) and `frontend`
+  (`eshop-ai-frontend:local`, port 3000). The frontend starts after the backend
+  is healthy and reaches it at `http://backend:8000` (`BACKEND_INTERNAL_URL`,
+  set at runtime by Compose, never at build time).
+- The Dockerfiles and `.dockerignore` files live next to each app
+  (`backend/Dockerfile`, `frontend/Dockerfile`; build context is the app
+  directory). `deployment/docker/` stays reserved for later stages.
+- Health checks are defined in the Dockerfiles (backend `/health/ready`,
+  frontend `/`); `docker compose ps` shows `healthy` when ready.
+- `.env` is optional: the backend reads it when present, the frontend never
+  does. Compose forces `BACKEND_HOST=0.0.0.0` and `BACKEND_PORT=8000` inside the
+  container; override only the published host ports with `BACKEND_PORT` and
+  `FRONTEND_PORT` in `.env`.
+- Containers run as non-root with a read-only root file system, `/tmp` as
+  tmpfs, all capabilities dropped and `no-new-privileges`.
+- The frontend build downloads fonts (`next/font/google`), so
+  `docker compose build` needs network access.
+- Images are basic (pinned tags, no digest pins, no scanning); production
+  hardening is M7 (SHOP-075).
+
+```bash
+docker compose up --build -d   # build and start in the background
+docker compose ps              # state and health
+docker compose logs -f         # follow logs
+docker compose down            # stop and remove containers (no volumes yet)
+```
+
 - All published ports bind to `127.0.0.1`.
-- Data lives in named volumes. `docker compose down -v` **deletes local
+- Data lives in named volumes (from M2). `docker compose down -v` **deletes local
   data**; use it only when you intend to reset.
 - Native development (without containers) stays supported.
 
@@ -219,8 +248,8 @@ committed files for personal convenience.
 | Frontend production build | `npm run build` (`frontend/`; standalone output) | **Available now** |
 | Generate API types | `npm run generate:api` (`frontend/`; needs `uv` and `uv sync --locked` in `backend/`) | **Available now** |
 | Check API types for drift | `npm run check:api` (`frontend/`; fails when generated files are stale) | **Available now** |
-| Start containers | `docker compose up --build` (root) | M1 (SHOP-122) |
-| Stop containers | `docker compose down` (root) | M1 |
+| Start containers | `docker compose up --build -d` (root) | **Available now** |
+| Stop containers | `docker compose down` (root) | **Available now** |
 | Apply migrations | `uv run alembic upgrade head` (`backend/`) | M2 (SHOP-023) |
 | Seed demo data | Seeder command defined in SHOP-025 (`backend/`) | M2 |
 | End-to-end tests | Tool per UD-12 (SHOP-030) | M3 |
