@@ -37,6 +37,10 @@ class Settings(BaseSettings):
     shutdown_timeout_seconds: int = Field(default=20, ge=1, le=120)
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
     log_format: Literal["json", "console"] = "json"
+    # Feature flags (FR-PLAT-013, ADR-0009): read from FEATURE_<NAME>, off by default.
+    feature_ai_assistant: bool = False
+    feature_external_product_sources: bool = False
+    feature_notifications: bool = False
 
     @field_validator("log_level", "log_format", mode="before")
     @classmethod
