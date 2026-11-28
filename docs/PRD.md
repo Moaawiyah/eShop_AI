@@ -3,9 +3,9 @@
 | Field | Value |
 |---|---|
 | Document | Product Requirements Document (PRD) |
-| Version | 0.3 — Draft |
+| Version | 0.4 — Draft |
 | Status | Draft, pending project owner approval |
-| Jira | SHOP-001, SHOP-002, SHOP-003 |
+| Jira | SHOP-001, SHOP-002, SHOP-003, SHOP-009 |
 | Milestone | M0 — Project Initialization |
 | Last updated | 2026-11-25 |
 | Owner | Project owner |
@@ -21,6 +21,7 @@
 | 0.1 | 2026-11-25 | SHOP-001 | Initial draft |
 | 0.2 | 2026-11-25 | SHOP-002 | Approved password policy; configurable AI limits (2,000-character default); staged demo datasets (50 → 500) plus 10,000-product performance dataset; defined performance test environment and workload; availability-category rule; platform components (section 6.11) |
 | 0.3 | 2026-11-25 | SHOP-003 | Initial checkout uses a single-transaction stock check-and-decrement (FR-CHK-007); stock reservation (FR-CHK-004) becomes optional (`ADV`) |
+| 0.4 | 2026-11-25 | SHOP-009 | A-05: Jira project key `ESHOP`; roadmap IDs remain `SHOP-NNN` and are mapped to Jira keys |
 
 ## Document Conventions
 
@@ -921,7 +922,7 @@ repeatable check.
 | A-02 | The UI is English-only with `en-US` USD formatting. |
 | A-03 | Synthetic demo data is acceptable for customers, orders and reviews. |
 | A-04 | GitHub Actions free capacity is sufficient for CI. |
-| A-05 | A Jira project with the `SHOP` key is available for task tracking. |
+| A-05 | A Jira project `eShop_AI` with the `ESHOP` key is available for task tracking. Jira generates its own `ESHOP-N` issue keys. Roadmap task IDs (`SHOP-NNN`) remain the permanent identifiers and are mapped to Jira keys in `docs/jira/issue-map.csv`. |
 | A-06 | The developer machine can run Docker Compose (and kind for advanced milestones). |
 | A-07 | At least one free, authorized product data source can be identified; if not, the system relies on owner-curated files and demo data. |
 

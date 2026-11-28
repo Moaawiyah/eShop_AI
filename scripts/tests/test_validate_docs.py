@@ -64,8 +64,8 @@ class RepositoryTests(unittest.TestCase):
         self.assertEqual(git("ls-files", "--error-unmatch", ".env.example"), 0)
 
 
-class MutationTests(unittest.TestCase):
-    """Each test plants one defect in a temporary copy and expects it reported."""
+class MutationCase(unittest.TestCase):
+    """Base for tests that plant one defect in a temporary copy and expect it reported."""
 
     def setUp(self) -> None:
         self._tmp = tempfile.TemporaryDirectory()
@@ -88,6 +88,10 @@ class MutationTests(unittest.TestCase):
     def assert_reported(self, fragment: str) -> None:
         errors = run_all(self.root).errors
         self.assertTrue(any(fragment in e for e in errors), f"{fragment!r} not in {errors}")
+
+
+class MutationTests(MutationCase):
+    """Each test plants one defect in a temporary copy and expects it reported."""
 
     def test_clean_copy_passes_strict(self) -> None:
         with contextlib.redirect_stdout(io.StringIO()):
