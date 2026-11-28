@@ -6,8 +6,9 @@ engineering, DevOps, infrastructure as code, observability, AWS and agentic AI.
 
 > **Status: M1 — Foundations (in progress; M0 closed 2026-11-28).** Requirements, architecture,
 > security baseline, delivery plan and development tooling are documented.
-> **No application code exists yet**; every product capability below is
-> **planned**. Payments are always simulated and all data is synthetic.
+> The backend and frontend foundations run natively and in Docker Compose,
+> with CI and security scanning; **every product capability below is
+> planned**. Payments are always simulated and all data is synthetic.
 
 ## Objectives
 
@@ -116,16 +117,15 @@ docs/             PRD, architecture, roadmap, security, development guide, ADRs
 
 ## Getting Started
 
-Prerequisites today: Git and Python 3.11 or newer. The full toolchain
-(uv, Node.js LTS, Docker) is needed from M1 — see the
-[Development Guide](docs/DEVELOPMENT.md).
-
-Available now:
+Prerequisites: Git, [uv](https://docs.astral.sh/uv/), Node.js 26 LTS and
+optionally Docker Desktop. The [Development Guide](docs/DEVELOPMENT.md) has the
+full setup, every check command and troubleshooting.
 
 ```bash
-python3 scripts/validate_docs.py --strict          # documentation consistency checks
-python3 -m unittest discover -s scripts/tests -v   # validator and hook self-tests
-git check-ignore -v .env                            # confirms local secrets are ignored
+cd backend && uv sync --locked && uv run python -m app    # API on http://127.0.0.1:8000
+cd frontend && npm ci && npm run dev                      # UI on http://127.0.0.1:3000
+docker compose up --build -d                              # or run both with Docker
+python3 scripts/validate_docs.py --strict                 # documentation consistency checks
 ```
 
 ## Security and Cost Principles

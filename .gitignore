@@ -77,6 +77,10 @@ data/minio/
 CLAUDE.local.md
 .claude/settings.local.json
 
+# Generated browser snapshots and temporary agent worktrees
+.playwright-mcp/
+.claude/worktrees/
+
 # VS Code personal configuration
 .vscode/*
 !.vscode/settings.json
