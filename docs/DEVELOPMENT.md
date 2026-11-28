@@ -99,7 +99,11 @@ The repository ships `.vscode/settings.json` and `.vscode/extensions.json`.
 
 ### 5.2 Node.js (frontend, M1)
 
-- `frontend/node_modules/` is local to the frontend and git-ignored.
+- Node.js 26 (Active LTS) is pinned in `frontend/.nvmrc` and the
+  `engines` field of `frontend/package.json` (`>=26 <27`); with nvm run
+  `nvm use` from `frontend/`.
+- Install exactly the locked dependencies with `npm ci` from `frontend/`.
+  `frontend/node_modules/` and `.next/` are local and git-ignored.
 - Add dependencies with `npm install <package>` (or `--save-dev`) from
   `frontend/`; `package-lock.json` is committed; CI runs `npm ci`.
 
@@ -206,9 +210,13 @@ committed files for personal convenience.
 | Backend format check | `uv run ruff format --check .` (`backend/`; fix with `uv run ruff format .`) | **Available now** |
 | Backend type check | `uv run mypy app` (`backend/`) | **Available now** |
 | Backend import contracts | `uv run lint-imports` (`backend/`; contracts in `pyproject.toml`) | **Available now** |
-| Install frontend dependencies | `npm ci` (`frontend/`) | M1 (SHOP-014) |
-| Run the frontend | `npm run dev` (`frontend/`) | M1 |
-| Frontend lint, type check, build | `npm run lint`, `npm run typecheck`, `npm run build` (`frontend/`) | M1 |
+| Install frontend dependencies | `npm ci` (`frontend/`) | **Available now** |
+| Run the frontend | `npm run dev` (`frontend/`; http://localhost:3000) | **Available now** |
+| Frontend lint | `npm run lint` (`frontend/`; ESLint, zero warnings allowed) | **Available now** |
+| Frontend format | `npm run format:check` / `npm run format` (`frontend/`; Prettier) | **Available now** |
+| Frontend type check | `npm run typecheck` (`frontend/`) | **Available now** |
+| Frontend tests | `npm test` (`frontend/`; Vitest) | **Available now** |
+| Frontend production build | `npm run build` (`frontend/`; standalone output) | **Available now** |
 | Generate API types | `npm run generate:api` (`frontend/`; generator per UD-14) | M1 (SHOP-015) |
 | Start containers | `docker compose up --build` (root) | M1 (SHOP-122) |
 | Stop containers | `docker compose down` (root) | M1 |
