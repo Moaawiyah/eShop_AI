@@ -1,0 +1,25 @@
+[project]
+name = "eshop-backend"
+version = "0.1.0"
+description = "eShop_AI backend: FastAPI modular monolith (educational, non-commercial)"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "fastapi>=0.165.0",
+    "pydantic-settings>=2.16.3",
+    "uvicorn>=0.54.0",
+]
+
+[tool.uv]
+# Application, not a library: no build backend; run from backend/.
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "--strict-markers"
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.16.2",
+    "pytest>=9.2.0",
+]

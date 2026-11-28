@@ -492,8 +492,11 @@ flowchart LR
 
 ### 3.1 Package Layout
 
-Status: **Approved** layout (SHOP-003); internal file names are
-**Proposed** and confirmed in SHOP-010.
+Status: **Approved** layout (SHOP-003). Implemented in SHOP-010:
+`main.py`, `__main__.py` (Uvicorn entry point with the graceful-shutdown
+timeout), `api/router.py`, `core/settings.py` and the package skeleton.
+`bootstrap.py` is added with the first long-lived component (SHOP-012 or
+SHOP-023); until then the lifespan in `main.py` holds the settings.
 
 ```
 backend/

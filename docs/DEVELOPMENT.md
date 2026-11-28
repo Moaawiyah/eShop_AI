@@ -8,8 +8,9 @@
 | Last updated | 2026-11-25 |
 | Related | [Architecture](ARCHITECTURE.md) · [Roadmap](ROADMAP.md) · [Security](SECURITY.md) · [Contributing](../CONTRIBUTING.md) |
 
-> **Status:** the frontend and backend are **not initialized yet**. Only
-> the commands marked **Available now** work today. Commands marked with a
+> **Status:** the backend skeleton exists (SHOP-010); the frontend is
+> **not initialized yet**. Only the commands marked **Available now** work
+> today. Commands marked with a
 > milestone become available when that milestone's tasks are done; their
 > exact form is confirmed in the listed task.
 
@@ -84,6 +85,15 @@ The repository ships `.vscode/settings.json` and `.vscode/extensions.json`.
 - Add dependencies with `uv add <package>` (or `uv add --dev <package>`)
   from `backend/`; never use `pip install` in the project.
 - `backend/uv.lock` is committed; CI runs `uv sync --locked`.
+- `backend/.python-version` pins Python 3.13 (`requires-python` is
+  `>=3.13,<3.14`). If it is missing, `uv python install 3.13` installs a
+  uv-managed interpreter.
+- Deactivate any other project's virtual environment first (`deactivate`
+  or `unset VIRTUAL_ENV`). uv warns about a different active environment,
+  ignores it and uses `backend/.venv`.
+- Settings are read from environment variables and the repository-root
+  `.env` (copied from `.env.example`). Environment variables take
+  precedence, and invalid values stop start-up.
 - Every new dependency needs a justification (purpose, maintenance,
   license, alternatives) in the pull request.
 
@@ -179,9 +189,11 @@ committed files for personal convenience.
 | Validator and Claude hook self-tests | `python3 -m unittest discover -s scripts/tests` (root) | **Available now** |
 | Check ignore rules | `git check-ignore -v .env` (root) | **Available now** |
 | Validate JSON configuration | `python3 -m json.tool .vscode/settings.json` and `.claude/settings.json` (root) | **Available now** |
-| Install backend dependencies | `uv sync` (`backend/`) | M1 (SHOP-010) |
-| Run the backend with reload | `uv run fastapi dev` or the equivalent defined in SHOP-010 (`backend/`) | M1 |
-| Backend tests | `uv run pytest` (`backend/`) | M1 (SHOP-011) |
+| Install backend dependencies | `uv sync --locked` (`backend/`; creates `backend/.venv`) | **Available now** |
+| Run the backend | `uv run python -m app` (`backend/`; host, port and shutdown timeout from settings) | **Available now** |
+| Run the backend with reload | `uv run uvicorn app.main:create_app --factory --reload` (`backend/`) | **Available now** |
+| Open the API documentation | `http://127.0.0.1:8000/api/v1/docs` (OpenAPI: `/api/v1/openapi.json`; development and test only) | **Available now** |
+| Backend tests | `uv run pytest` (`backend/`; coverage from SHOP-011) | **Available now** |
 | Backend lint and format check | `uv run ruff check .` and `uv run ruff format --check .` (`backend/`) | M1 |
 | Backend type check | `uv run mypy .` (`backend/`) | M1 |
 | Install frontend dependencies | `npm ci` (`frontend/`) | M1 (SHOP-014) |
