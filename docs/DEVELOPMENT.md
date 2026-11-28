@@ -249,6 +249,23 @@ SHOP-020 replaces the M1 rows with the final, verified commands.
 Debugging rules: never paste secrets, session IDs or `.env` contents into
 issues, logs or AI prompts; use synthetic data for reproductions.
 
+### 12.1 Backend Logging
+
+Run from `backend/`:
+
+```bash
+LOG_LEVEL=DEBUG uv run python -m app        # verbose output
+LOG_FORMAT=console uv run python -m app     # human-readable lines
+curl -i -H 'X-Request-ID: my-test-request-01' http://127.0.0.1:8000/api/v1/docs
+```
+
+The response echoes `X-Request-ID` (invalid values are replaced by a
+generated one); search the logs for it. Example JSON line:
+
+```json
+{"timestamp": "2026-11-28T12:55:21.787Z", "level": "INFO", "service": "eshop-backend", "logger": "app.api.access", "event": "request completed", "correlation_id": "my-test-request-01", "method": "GET", "route": "/api/v1/example/{id}", "status_code": 200, "duration_ms": 0.166}
+```
+
 ## 13. Branch Workflow
 
 Follow `CLAUDE.md` section 10 and [CONTRIBUTING.md](../CONTRIBUTING.md).

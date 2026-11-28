@@ -276,7 +276,10 @@ secrets with a cryptographically secure generator, for example
 - Logs are structured JSON with correlation IDs (NFR-OBS-001) and must
   never contain passwords, password hashes, session IDs, CSRF tokens, API
   keys, full email addresses or addresses (NFR-SEC-014, NFR-PRIV-002).
-  Redaction is applied in the logging configuration, not left to callers.
+  Redaction is applied in the logging configuration, not left to callers
+  (implemented in `backend/app/core/redaction.py` and applied by the
+  formatters in `backend/app/core/logging.py`; exception messages are never
+  logged).
 - Logged security events: sign-in failures, lockouts, CSRF failures,
   authorization denials, role changes, account disabling, import of
   rejected files, AI tool denials and budget exhaustion (NFR-SEC-019).
