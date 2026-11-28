@@ -7,9 +7,13 @@ Run: python3 -m unittest discover -s scripts/tests
 
 from __future__ import annotations
 
+import json
 import unittest
+from pathlib import Path
 
 from test_claude_hooks import decision
+
+SETTINGS = Path(__file__).resolve().parents[2] / ".claude" / "settings.json"
 
 
 class GitContentTests(unittest.TestCase):
@@ -44,6 +48,37 @@ class GitContentTests(unittest.TestCase):
 
     def test_ordinary_git_use_is_unaffected(self) -> None:
         self.check(self.ALLOW, None)
+
+
+class GitFollowUpTests(GitContentTests):
+    """Second review (2026-11-25): option values, global options and input-driven reads."""
+
+    DENY = [
+        "git log -U3 -- .env", "git log --word-diff -- .env", "git whatchanged -p .env",
+        "git format-patch --stdout -- .env", "git grep -if .env", "git log -L1,5:.env",
+        "git log -L1,5:backend/.ENV.local", "git show --format=%B HEAD:.env",
+    ]
+    ASK = [
+        "git -C ~/.aws diff credentials config", "git -C .. status",
+        "git --git-dir=/tmp/other/.git show HEAD:notes", "git --work-tree=/ diff",
+        "git -c core.pager=cat log", "git cat-file --batch", "git cat-file --batch-check",
+        "git diff --stdin",
+    ]
+    ALLOW = [
+        "git -C . status", "git -C docs log --oneline", "git log --oneline -- .env",
+        "git log --all --format=%H -n 3 -- .env", "git rm --cached .env",
+        "git status --short .env", "git ls-files --error-unmatch .env.example",
+        "git diff -- .env.example", "git diff --stat main...HEAD", "git grep -ie .env -- docs",
+        "git log -p -- docs/PRD.md", "git log -U3 -- README.md", "git grep -n TODO -- scripts",
+    ]
+
+
+class GitAllowRuleTests(unittest.TestCase):
+    def test_content_printing_git_commands_have_no_wildcard_allow(self) -> None:
+        rules = json.loads(SETTINGS.read_text(encoding="utf-8"))["permissions"]["allow"]
+        for sub in ("diff", "log", "show", "blame", "grep", "cat-file"):
+            with self.subTest(sub=sub):
+                self.assertFalse([r for r in rules if r.startswith(f"Bash(git {sub}") and "*" in r])
 
 
 if __name__ == "__main__":
