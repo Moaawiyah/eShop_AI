@@ -1,0 +1,121 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design tokens. Colours are oklch; lightness values were chosen so that
+ * text pairs meet WCAG 2.2 AA (4.5:1) and focus rings meet 3:1 against the
+ * page background in both themes.
+ */
+:root {
+  --background: oklch(0.985 0.003 265);
+  --foreground: oklch(0.19 0.02 265);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.19 0.02 265);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.19 0.02 265);
+  /* Brand accent: one confident electric indigo. */
+  --primary: oklch(0.47 0.2 265);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.95 0.008 265);
+  --secondary-foreground: oklch(0.25 0.02 265);
+  --muted: oklch(0.955 0.006 265);
+  --muted-foreground: oklch(0.45 0.02 265);
+  --accent: oklch(0.94 0.02 265);
+  --accent-foreground: oklch(0.25 0.05 265);
+  --destructive: oklch(0.5 0.21 27);
+  --border: oklch(0.9 0.008 265);
+  --input: oklch(0.86 0.01 265);
+  --ring: oklch(0.5 0.2 265);
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: oklch(0.16 0.015 265);
+  --foreground: oklch(0.97 0.005 265);
+  --card: oklch(0.2 0.018 265);
+  --card-foreground: oklch(0.97 0.005 265);
+  --popover: oklch(0.22 0.018 265);
+  --popover-foreground: oklch(0.97 0.005 265);
+  --primary: oklch(0.74 0.14 265);
+  --primary-foreground: oklch(0.16 0.02 265);
+  --secondary: oklch(0.26 0.02 265);
+  --secondary-foreground: oklch(0.97 0.005 265);
+  --muted: oklch(0.24 0.018 265);
+  --muted-foreground: oklch(0.75 0.02 265);
+  --accent: oklch(0.3 0.04 265);
+  --accent-foreground: oklch(0.97 0.005 265);
+  --destructive: oklch(0.72 0.17 22);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 18%);
+  --ring: oklch(0.74 0.14 265);
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Typography scale for headings (utilities: text-display, text-title). */
+  --text-display: clamp(2.25rem, 1.4rem + 3.6vw, 4rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.03em;
+  --text-title: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem);
+  --text-title--line-height: 1.15;
+  --text-title--letter-spacing: -0.02em;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans antialiased;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

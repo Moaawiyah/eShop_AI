@@ -737,7 +737,12 @@ infrastructure capability (FR-PLAT-016).
 
 ## 6. Frontend Architecture
 
-Status: stack **Approved**; structure **Proposed** (confirmed in SHOP-014).
+Status: stack **Approved**; structure **Confirmed** in SHOP-014. Implemented
+now: `app/(storefront)` with the home page, `components/ui` (shadcn/ui),
+`components/layout` (header, footer, skip link, theme toggle, mobile
+navigation) and the root `not-found`, `error` and `loading` states. The
+other route groups, `features/`, `lib/api`, `lib/format` and `middleware.ts`
+are planned and added by later tasks.
 
 ### 6.1 Structure
 
