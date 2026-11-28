@@ -410,7 +410,7 @@ Each milestone adds its own criteria below.
 | SHOP-016 | Typed configuration and feature flags (safe defaults); update `.env.example` | MVP | Medium | 1 | SHOP-010 | Done (PR #13) |
 | SHOP-017 | Basic CI: backend (Ruff, mypy, pytest) and frontend (lint, format, type check, build) with caching and path filters | MVP | Highest | 1.5 | SHOP-011, SHOP-014 | Planned |
 | SHOP-018 | Basic security automation: Gitleaks, Dependabot, pip-audit and npm audit (reporting) | MVP | High | 1 | SHOP-017 | Planned |
-| SHOP-019 | Security headers and CORS baseline (backend and Next.js) | MVP | High | 1 | SHOP-012, SHOP-014 | Planned |
+| SHOP-019 | Security headers and CORS baseline (backend and Next.js) | MVP | High | 1 | SHOP-012, SHOP-014 | Done (PR #17) |
 | SHOP-020 | Update `DEVELOPMENT.md` with local setup and verification commands | MVP | Medium | 0.5 | SHOP-017 | Planned |
 | SHOP-122 | Basic Dockerfiles for backend and frontend; initial Docker Compose running both applications (added in SHOP-003) | MVP | High | 1 | SHOP-010, SHOP-014 | Done (PR #16) |
 

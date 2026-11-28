@@ -28,7 +28,8 @@ def test_openapi_and_docs_available_in_development(make_settings: MakeSettings) 
 def test_openapi_and_docs_disabled_in_shared_environments(
     make_settings: MakeSettings, environment: str
 ) -> None:
-    with TestClient(create_app(make_settings(app_env=environment))) as client:
+    settings = make_settings(app_env=environment, allowed_origins=["https://shop.example"])
+    with TestClient(create_app(settings)) as client:
         for path in ("/api/v1/openapi.json", "/api/v1/docs", "/docs", "/redoc"):
             assert client.get(path).status_code == 404, path
 
@@ -50,6 +51,7 @@ def test_lifespan_logs_start_up_and_shutdown(
 
 def test_factory_uses_cached_settings_by_default(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("ALLOWED_ORIGINS", "https://shop.example")
     app = create_app()
     assert app.state.settings.app_env == "production"
     assert app.debug is False

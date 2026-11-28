@@ -9,15 +9,32 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
+from urllib.parse import urlsplit
 
 from pydantic import Field, ValidationInfo, field_validator, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 REPOSITORY_ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
 SHARED_ENVIRONMENTS = frozenset({"staging", "production"})
 
 Environment = Literal["development", "test", "staging", "production"]
+
+
+def _is_bare_origin(origin: str) -> bool:
+    """True for `http(s)://host[:port]` without credentials, path, query or fragment."""
+    try:
+        parts = urlsplit(origin)
+        _ = parts.port  # raises ValueError for an invalid port
+    except ValueError:
+        return False
+    return (
+        parts.scheme in ("http", "https")
+        and bool(parts.hostname)
+        and not parts.username
+        and not parts.password
+        and origin == f"{parts.scheme}://{parts.netloc}"
+    )
 
 
 class Settings(BaseSettings):
@@ -37,6 +54,11 @@ class Settings(BaseSettings):
     shutdown_timeout_seconds: int = Field(default=20, ge=1, le=120)
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
     log_format: Literal["json", "console"] = "json"
+    # Browser origins allowed by CORS and the Origin check (NFR-SEC-009, SHOP-019).
+    allowed_origins: Annotated[list[str], NoDecode] = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
     # Feature flags (FR-PLAT-013, ADR-0009): read from FEATURE_<NAME>, off by default.
     feature_ai_assistant: bool = False
     feature_external_product_sources: bool = False
@@ -48,6 +70,33 @@ class Settings(BaseSettings):
         if not isinstance(value, str):
             return value
         return value.strip().upper() if info.field_name == "log_level" else value.strip().lower()
+
+    @field_validator("allowed_origins", mode="before")
+    @classmethod
+    def _split_origins(cls, value: object) -> object:
+        """Accept a comma-separated string; strip blanks and trailing slashes."""
+        items = value.split(",") if isinstance(value, str) else value
+        if not isinstance(items, list):
+            return items
+        return [item.strip().rstrip("/") for item in items if str(item).strip()]
+
+    @field_validator("allowed_origins")
+    @classmethod
+    def _bare_origins(cls, value: list[str]) -> list[str]:
+        for origin in value:
+            if not _is_bare_origin(origin):
+                raise ValueError(
+                    "ALLOWED_ORIGINS entries must be bare origins (scheme://host[:port])"
+                )
+        return value
+
+    @model_validator(mode="after")
+    def _https_origins_in_shared_environments(self) -> Settings:
+        if self.app_env in SHARED_ENVIRONMENTS and any(
+            not origin.startswith("https://") for origin in self.allowed_origins
+        ):
+            raise ValueError("ALLOWED_ORIGINS must use https in staging and production")
+        return self
 
     @model_validator(mode="after")
     def _no_debug_in_shared_environments(self) -> Settings:

@@ -1160,7 +1160,8 @@ Status: **Proposed** conventions, confirmed in SHOP-010 and SHOP-026.
 | Errors | RFC 9457 problem details (section 3.8). |
 | Authentication | Server-side session cookie: `HttpOnly`, `Secure` outside local HTTP, `SameSite=Lax`, `__Host-` prefix in TLS environments ([ADR-0004](adr/0004-cookie-sessions-and-csrf.md)). |
 | Authorization | Role and object-level checks on every endpoint; customer endpoints use `/me` paths, not user IDs. |
-| CSRF | Synchronizer token bound to the session, fetched from `GET /api/v1/auth/csrf`, sent in `X-CSRF-Token` on unsafe methods; `Origin` verified. |
+| CSRF | Synchronizer token bound to the session, fetched from `GET /api/v1/auth/csrf`, sent in `X-CSRF-Token` on unsafe methods; `Origin` verified. Implemented now (SHOP-019): `Origin` verification of unsafe requests; planned (SHOP-032): the token. |
+| CORS | Explicit allow-list from `ALLOWED_ORIGINS` (never `*`), credentials allowed; the same-origin proxy is the primary path. Implemented (SHOP-019). |
 | Rate limiting | Gatekeeper middleware; `429` with `Retry-After`. |
 | Idempotency | `Idempotency-Key` header required on `POST /api/v1/orders`; same key and payload returns the original order; same key with a different payload returns 409. |
 | OpenAPI | Served at `/api/v1/openapi.json`; interactive docs enabled locally and protected or disabled in shared environments. |

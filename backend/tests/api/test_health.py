@@ -110,7 +110,7 @@ def test_openapi_documents_health(health_app: FastAPI) -> None:
 
 
 def test_health_available_when_docs_disabled(make_settings: Callable[..., Settings]) -> None:
-    app = create_app(make_settings(app_env="production"))
+    app = create_app(make_settings(app_env="production", allowed_origins=["https://shop.example"]))
     with TestClient(app) as client:
         assert client.get("/api/v1/openapi.json").status_code == 404
         assert client.get("/health/live").json() == {"status": "ok"}
