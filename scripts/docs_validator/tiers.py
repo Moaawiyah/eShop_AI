@@ -9,17 +9,25 @@ from .core import Context, between
 ROADMAP = "docs/ROADMAP.md"
 
 
-def check_tiers(ctx: Context) -> None:
-    """Every task is in exactly one tier; no task depends on a later tier."""
+def tier_assignments(ctx: Context) -> dict[str, list[tuple[str, int]]]:
+    """Map each task to its (milestone, tier) entries in the section 2.2 tier table."""
     block = between(ctx.text(ROADMAP), "### 2.2 Portfolio Delivery Tiers", "### 2.3",
                     where=ROADMAP)
-    tiers: dict[str, list[int]] = {}
+    found: dict[str, list[tuple[str, int]]] = {}
     for line in block.splitlines():
-        if re.match(r"^\| (M\d+|Backlog) \|", line):
+        match = re.match(r"^\| (M\d+|Backlog) \|", line)
+        if match:
             cells = [c.strip() for c in line.split("|")[2:5]]
             for tier, cell in enumerate(cells, start=1):
                 for number in re.findall(r"\d{3}", cell):
-                    tiers.setdefault(f"SHOP-{number}", []).append(tier)
+                    found.setdefault(f"SHOP-{number}", []).append((match.group(1), tier))
+    return found
+
+
+def check_tiers(ctx: Context) -> None:
+    """Every task is in exactly one tier; no task depends on a later tier."""
+    tiers = {task: [tier for _, tier in entries]
+             for task, entries in tier_assignments(ctx).items()}
     ids = set(ctx.task_ids)
     problems = {
         "assigned to several tiers": sorted(t for t, v in tiers.items() if len(v) > 1),

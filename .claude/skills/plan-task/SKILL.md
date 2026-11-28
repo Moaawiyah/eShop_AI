@@ -9,7 +9,8 @@ argument-hint: "SHOP-NNN"
 Plan task **$ARGUMENTS**. Do not create or modify any file.
 
 1. **Locate the task.** Find its row in `docs/ROADMAP.md` (section 7) and
-   its Jira CSV row (section 10; M0 to M2 only). Stop and report if the ID is missing or
+   its row in `docs/jira/backlog.csv` (section 10; M0 to M2 so far) and its Jira key in
+   `docs/jira/issue-map.csv`, if imported. Stop and report if the ID is missing or
    malformed.
 2. **Check readiness.** For each dependency, report its status. Confirm the
    task's milestone is the current one in `CLAUDE.md` section 1; if not,

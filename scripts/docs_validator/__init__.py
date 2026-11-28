@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from pathlib import Path
 
-from . import architecture_adrs, claude_config, prd_roadmap, repository, tiers
+from . import architecture_adrs, claude_config, jira_backlog, prd_roadmap, repository, tiers
 from .core import Context, ParseError, Report
 
 Check = Callable[[Context], None]
@@ -17,7 +17,7 @@ CHECKS: tuple[tuple[str, Check], ...] = (
     ("roadmap tasks", prd_roadmap.check_tasks),
     ("roadmap Mermaid nodes", prd_roadmap.check_mermaid_task_nodes),
     ("traceability matrix", prd_roadmap.check_traceability),
-    ("Jira CSV", prd_roadmap.check_jira_csv),
+    ("Jira backlog", jira_backlog.check_jira_backlog),
     ("delivery tiers", tiers.check_tiers),
     ("Tier 1 estimate", tiers.check_tier1_estimate),
     ("architecture dependencies", architecture_adrs.check_dependency_rules),

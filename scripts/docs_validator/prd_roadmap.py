@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import csv
-import io
 import re
 from collections import Counter
 
@@ -96,12 +94,3 @@ def check_traceability(ctx: Context) -> None:
     if missing:
         ctx.report.error("traceability", f"requirements not in the matrix: {missing}")
     ctx.report.note(f"Traceability: {len(requirements & covered)}/{len(requirements)} mapped")
-
-
-def check_jira_csv(ctx: Context) -> None:
-    block = between(ctx.text(ROADMAP), "```csv", "```", where=ROADMAP).strip()
-    rows = list(csv.reader(io.StringIO(block)))
-    widths = {len(r) for r in rows}
-    if len(widths) != 1:
-        ctx.report.error("csv", f"Jira CSV rows have inconsistent column counts: {widths}")
-    ctx.report.note(f"Jira CSV: {len(rows) - 1} rows")

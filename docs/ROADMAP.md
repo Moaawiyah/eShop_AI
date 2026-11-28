@@ -25,7 +25,8 @@
   (MVP release at the end of M7); M8–M11 form the **advanced track**.
   `ADV` tasks inside M4–M6 are optional within those milestones and never
   block their exit; they can be deferred until after M7.
-- **Task IDs** (`SHOP-NNN`) are planned Jira identifiers (section 10).
+- **Task IDs** (`SHOP-NNN`) are permanent roadmap identifiers; Jira issue
+  keys are mapped to them in `docs/jira/issue-map.csv` (section 10).
 - **Priority** uses Jira levels: Highest, High, Medium, Low.
 - **Effort** is in *ideal developer days* (focused work including
   implementation with Claude Code, review, tests and documentation).
@@ -1025,65 +1026,53 @@ and no stage that costs money starts without explicit approval.
 
 ## 10. Initial Jira Backlog
 
-### 10.1 Import Conventions
+### 10.1 Import Conventions (decided 2026-11-25, SHOP-009)
 
-- **Milestones as Fix Versions** (`M0` … `M11`, `Backlog`) rather than
-  epics, so that epics do not consume issue numbers. Epics MAY be added
-  later for themes (e.g. "Security", "AI").
-- **Key alignment:** importing issues in numeric order into an empty
-  `SHOP` project keeps Jira keys aligned with roadmap IDs (Jira displays
-  `SHOP-3` for `SHOP-003`). If alignment breaks, keep the roadmap ID in the
-  summary prefix and the description.
-- **Labels:** `mvp` or `adv`, plus an area label (`docs`, `backend`,
-  `frontend`, `ai`, `devops`, `aws`, `security`, `testing`).
-- **Estimates** are in ideal days; convert during field mapping if the
-  importer expects another unit.
-- **Dependencies** are listed in the description and converted into
-  "is blocked by" links after import.
-- Later milestones are imported when their milestone starts, from the task
-  tables in section 7, to keep the backlog current.
-- SHOP-122 and SHOP-123 were added in SHOP-003, and SHOP-124 and SHOP-125
-  in SHOP-007, after the original numbering; import them after SHOP-121 in
-  numeric order so keys stay aligned. Add a `tier-1`,
-  `tier-2` or `tier-3` label from section 2.2.
+- **Roadmap IDs stay permanent.** `SHOP-NNN` identifies a task in
+  branches, commits, pull requests and documents. Jira generates its own
+  issue keys, which are not aligned with roadmap IDs. No placeholder issues
+  are created to force alignment.
+- **Traceability:** every Jira issue starts its summary with the roadmap ID
+  and stores it in a `Roadmap ID` short-text custom field.
+  [`docs/jira/issue-map.csv`](jira/issue-map.csv) records roadmap ID →
+  Jira key and is updated through a pull request after each import.
+- **Duplicate prevention:** import only rows whose roadmap ID has no Jira
+  key in the map, and first confirm with JQL (`"Roadmap ID" ~ "SHOP-NNN"`)
+  that no issue exists. The validator rejects duplicate roadmap IDs and
+  duplicate Jira keys.
+- **Milestones are Fix Versions** (`M0` … `M11`, `Backlog`) rather than
+  epics. Epics MAY be added later for themes (e.g. "Security", "AI").
+- **Labels:** track (`mvp` or `adv`), one area (`docs`, `backend`,
+  `frontend`, `ai`, `devops`, `aws`, `security`, `testing`), delivery tier
+  (`tier-1` to `tier-3`, section 2.2), and `deferred` for deferred tasks
+  (SHOP-125).
+- **Estimates:** `Original Estimate` is in seconds at 8 hours per ideal day.
+  Ideal days remain the planning unit in this roadmap.
+- **Dependencies** are listed in each description ("Depends on: …") and are
+  converted into "is blocked by" links after import.
+- **Acceptance criteria** stay with each milestone in section 7; issue
+  descriptions point there.
+- Later milestones are added to the backlog file when they start.
+  `scripts/validate_docs.py` checks every row against this roadmap:
+  priority, milestone, tier, track, estimate, dependencies and M0 status.
 
-### 10.2 Backlog for M0–M2 (CSV)
+### 10.2 Import Files
 
-```csv
-Summary,Issue Type,Status,Priority,Fix Version,Labels,Estimate (days),Description
-"SHOP-001 Engineering decisions and PRD",Task,Done,Highest,M0,mvp,1,"Roadmap ID SHOP-001. Depends on: none."
-"SHOP-002 Engineering refinement, Claude rules and roadmap",Task,Done,Highest,M0,mvp,1,"Roadmap ID SHOP-002. Depends on: SHOP-001."
-"SHOP-003 Architecture document, ADRs and delivery tiers",Task,Done,Highest,M0,mvp,2,"Roadmap ID SHOP-003. Depends on: SHOP-002. ADR template and ADR-0001 to ADR-0008."
-"SHOP-004 Security, development and contribution baseline",Task,Done,High,M0,mvp,1,"Roadmap ID SHOP-004. Depends on: SHOP-003. Includes SHOP-005 scope, .env.example, VS Code files and the documentation validator."
-"SHOP-005 Development and contribution guides",Task,Done,High,M0,mvp,1,"Roadmap ID SHOP-005. Depends on: SHOP-003. Delivered in SHOP-004."
-"SHOP-006 README",Task,Done,High,M0,mvp,0.5,"Roadmap ID SHOP-006. Depends on: SHOP-003, SHOP-005. DECISIONS index done in SHOP-003; .env.example done in SHOP-004."
-"SHOP-007 Claude Code safeguards and repository conventions",Task,Done,High,M0,mvp,1,"Roadmap ID SHOP-007. Depends on: SHOP-005. Permission rules, hooks, plugin scope review, repository conventions."
-"SHOP-008 GitHub repository setup",Task,Done,High,M0,mvp,0.5,"Roadmap ID SHOP-008. Depends on: SHOP-006, SHOP-007. Public; MIT license; main ruleset, private vulnerability reporting and Dependabot applied; changes require approval."
-"SHOP-009 Jira project setup and backlog import",Task,To Do,Medium,M0,mvp,0.5,"Roadmap ID SHOP-009. Depends on: SHOP-002."
-"SHOP-010 Backend skeleton",Task,To Do,Highest,M1,mvp,2,"Roadmap ID SHOP-010. Depends on: SHOP-008."
-"SHOP-011 Backend quality tooling",Task,To Do,Highest,M1,mvp,1,"Roadmap ID SHOP-011. Depends on: SHOP-010."
-"SHOP-012 Structured logging and safe error handling",Task,To Do,High,M1,mvp,1.5,"Roadmap ID SHOP-012. Depends on: SHOP-010."
-"SHOP-013 Liveness and readiness endpoints",Task,To Do,High,M1,mvp,0.5,"Roadmap ID SHOP-013. Depends on: SHOP-010."
-"SHOP-014 Frontend skeleton",Task,To Do,Highest,M1,mvp,2,"Roadmap ID SHOP-014. Depends on: SHOP-008."
-"SHOP-015 Typed API client foundation",Task,To Do,High,M1,mvp,1.5,"Roadmap ID SHOP-015. Depends on: SHOP-010, SHOP-014."
-"SHOP-016 Typed configuration and feature flags",Task,To Do,Medium,M1,mvp,1,"Roadmap ID SHOP-016. Depends on: SHOP-010."
-"SHOP-017 Basic CI pipeline",Task,To Do,Highest,M1,mvp,1.5,"Roadmap ID SHOP-017. Depends on: SHOP-011, SHOP-014."
-"SHOP-018 Basic security automation",Task,To Do,High,M1,mvp,1,"Roadmap ID SHOP-018. Depends on: SHOP-017."
-"SHOP-019 Security headers and CORS baseline",Task,To Do,High,M1,mvp,1,"Roadmap ID SHOP-019. Depends on: SHOP-012, SHOP-014."
-"SHOP-020 Local development documentation",Task,To Do,Medium,M1,mvp,0.5,"Roadmap ID SHOP-020. Depends on: SHOP-017."
-"SHOP-021 ADR search implementation and data access",Task,To Do,High,M2,mvp,0.5,"Roadmap ID SHOP-021. Depends on: SHOP-020."
-"SHOP-022 Extend Docker Compose with PostgreSQL",Task,To Do,Highest,M2,mvp,1,"Roadmap ID SHOP-022. Depends on: SHOP-020, SHOP-122."
-"SHOP-023 SQLAlchemy and Alembic migrations",Task,To Do,Highest,M2,mvp,2,"Roadmap ID SHOP-023. Depends on: SHOP-022."
-"SHOP-024 Catalog domain model",Task,To Do,Highest,M2,mvp,3,"Roadmap ID SHOP-024. Depends on: SHOP-021, SHOP-023."
-"SHOP-025 Deterministic demo data seeder",Task,To Do,Highest,M2,mvp,2,"Roadmap ID SHOP-025. Depends on: SHOP-024."
-"SHOP-026 Catalog read API",Task,To Do,Highest,M2,mvp,2,"Roadmap ID SHOP-026. Depends on: SHOP-024."
-"SHOP-027 Search and facets API",Task,To Do,High,M2,mvp,3,"Roadmap ID SHOP-027. Depends on: SHOP-021, SHOP-026."
-"SHOP-028 Performance dataset generator",Task,To Do,Medium,M2,mvp,1,"Roadmap ID SHOP-028. Depends on: SHOP-025."
-"SHOP-029 PostgreSQL integration tests in CI",Task,To Do,High,M2,mvp,1,"Roadmap ID SHOP-029. Depends on: SHOP-023."
-"SHOP-122 Basic Dockerfiles and initial Docker Compose",Task,To Do,High,M1,mvp,1,"Roadmap ID SHOP-122 (added in SHOP-003; import after SHOP-121). Depends on: SHOP-010, SHOP-014."
-"SHOP-124 Project-specific Claude skills and subagents",Task,Done,Medium,M0,mvp,0.5,"Roadmap ID SHOP-124 (added in SHOP-007; import after SHOP-123). Depends on: SHOP-007."
-"SHOP-125 Claude Code development MCP configuration",Task,To Do,Medium,M0,mvp,0.5,"Roadmap ID SHOP-125 (added in SHOP-007; import after SHOP-124). Depends on: SHOP-007. Deferred until a development task requires it; not an M0 exit requirement. External services require approval."
-```
+| File | Content |
+|---|---|
+| [`docs/jira/backlog.csv`](jira/backlog.csv) | CSV import file: M0–M2, 32 tasks (Jira's importer maps the repeated `Labels` columns to one multi-value field) |
+| [`docs/jira/issue-map.csv`](jira/issue-map.csv) | Roadmap ID → Jira key; keys are blank until imported |
+
+### 10.3 Jira Project and Import
+
+- Project `eShop_AI`, key **`ESHOP`**: a company-managed Kanban project on
+  the Free plan. The `ESHOP-N` keys Jira generates cannot be confused with
+  roadmap IDs (`SHOP-NNN`).
+- The owner creates the project and runs the import in the Jira web UI.
+  The steps are in [`docs/jira/README.md`](jira/README.md). No API, MCP
+  server or plugin is used.
+- SHOP-009 is Done only after the import has been verified and
+  `docs/jira/issue-map.csv` holds the real keys.
 
 ## 11. Decision Schedule and Roadmap Risks
 
