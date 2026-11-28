@@ -1264,8 +1264,8 @@ write access). Both reach data only through backend services.
 
 | Capability | Introduced | Matured | Status |
 |---|---|---|---|
-| Docker | Basic Dockerfiles, M1 (SHOP-122) | Production-optimized images, M7 (SHOP-075) | Approved |
-| Docker Compose | Backend and frontend, M1; PostgreSQL M2; Redis M3; worker M5 | Profiles and full-stack verification, M7 (SHOP-076) | Approved |
+| Docker | Basic Dockerfiles, M1 (SHOP-122, implemented) | Production-optimized images, M7 (SHOP-075) | Approved |
+| Docker Compose | Backend and frontend, M1 (SHOP-122, implemented); PostgreSQL M2; Redis M3; worker M5 | Profiles and full-stack verification, M7 (SHOP-076) | Approved |
 | GitHub Actions | Lint, type checks, tests, M1 | E2E, gates, publishing, M7; Terraform checks, M9; promotion, M10 | Approved |
 | Automated testing | Unit M1; integration M2; E2E local M3 | E2E in CI, coverage gate, performance baseline, M7 | Approved |
 | Security scanning | Gitleaks, Dependabot, pip-audit, npm audit, M1 | Trivy images and IaC, blocking thresholds, SBOM, M7 | Approved |

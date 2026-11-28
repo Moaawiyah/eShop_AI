@@ -412,7 +412,7 @@ Each milestone adds its own criteria below.
 | SHOP-018 | Basic security automation: Gitleaks, Dependabot, pip-audit and npm audit (reporting) | MVP | High | 1 | SHOP-017 | Planned |
 | SHOP-019 | Security headers and CORS baseline (backend and Next.js) | MVP | High | 1 | SHOP-012, SHOP-014 | Planned |
 | SHOP-020 | Update `DEVELOPMENT.md` with local setup and verification commands | MVP | Medium | 0.5 | SHOP-017 | Planned |
-| SHOP-122 | Basic Dockerfiles for backend and frontend; initial Docker Compose running both applications (added in SHOP-003) | MVP | High | 1 | SHOP-010, SHOP-014 | Planned |
+| SHOP-122 | Basic Dockerfiles for backend and frontend; initial Docker Compose running both applications (added in SHOP-003) | MVP | High | 1 | SHOP-010, SHOP-014 | Done (PR #16) |
 
 - **Deliverables:** runnable backend and frontend (natively and in basic
   containers), CI workflows, Dependabot configuration, generated API
