@@ -1146,11 +1146,11 @@ Status: **Proposed** conventions, confirmed in SHOP-010 and SHOP-026.
 | Idempotency | `Idempotency-Key` header required on `POST /api/v1/orders`; same key and payload returns the original order; same key with a different payload returns 409. |
 | OpenAPI | Served at `/api/v1/openapi.json`; interactive docs enabled locally and protected or disabled in shared environments. |
 
-**Representative endpoint groups** (not implemented):
+**Representative endpoint groups** (only Health is implemented, SHOP-013; the rest is planned):
 
 | Group | Base path | Examples | Access |
 |---|---|---|---|
-| Health | `/health` | `GET /health/live`, `GET /health/ready` | Public |
+| Health (implemented, SHOP-013) | `/health` | `GET /health/live` (always `200 {"status":"ok"}`), `GET /health/ready` (`200 {"status":"ready"}` after start-up, `503 {"status":"not_ready"}` before start-up and once shutdown begins; database and Redis checks arrive in M2, Watchdog checks in M8) | Public |
 | Auth | `/api/v1/auth` | `POST /register`, `POST /sign-in`, `POST /sign-out`, `GET /csrf` | Public or session |
 | Profile | `/api/v1/me` | `GET /me`, `PATCH /me`, `GET/POST /me/addresses` | Customer |
 | Catalog | `/api/v1/categories`, `/api/v1/products` | `GET /categories`, `GET /products?…`, `GET /products/{slug}`, `GET /products/compare?slugs=…` | Public |

@@ -1,13 +1,20 @@
 """Versioned API router assembly.
 
-Module routers are included here as they are implemented; the first
-endpoints (health checks) arrive in SHOP-013.
+Module routers are included here as they are implemented. Health
+endpoints are unversioned (ARCHITECTURE section 8) and exposed separately.
 """
 
 from __future__ import annotations
 
 from fastapi import APIRouter
 
+from app.api.health import router as health_router
+
 API_PREFIX = "/api/v1"
 
 api_router = APIRouter(prefix=API_PREFIX)
+
+
+def unversioned_routers() -> list[APIRouter]:
+    """Routers mounted without the API version prefix."""
+    return [health_router]

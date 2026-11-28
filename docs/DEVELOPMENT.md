@@ -193,6 +193,7 @@ committed files for personal convenience.
 | Run the backend | `uv run python -m app` (`backend/`; host, port and shutdown timeout from settings) | **Available now** |
 | Run the backend with reload | `uv run uvicorn app.main:create_app --factory --reload` (`backend/`) | **Available now** |
 | Open the API documentation | `http://127.0.0.1:8000/api/v1/docs` (OpenAPI: `/api/v1/openapi.json`; development and test only) | **Available now** |
+| Probe liveness and readiness | `curl -i http://127.0.0.1:8000/health/live` and `curl -i http://127.0.0.1:8000/health/ready` (backend running; ready returns 503 before start-up and during shutdown) | **Available now** |
 | Backend tests with coverage | `uv run pytest --cov=app --cov-branch --cov-report=term-missing` (`backend/`; plain `uv run pytest` also works) | **Available now** |
 | Backend lint | `uv run ruff check .` (`backend/`; fix with `uv run ruff check --fix .`) | **Available now** |
 | Backend format check | `uv run ruff format --check .` (`backend/`; fix with `uv run ruff format .`) | **Available now** |
@@ -257,6 +258,8 @@ Run from `backend/`:
 LOG_LEVEL=DEBUG uv run python -m app        # verbose output
 LOG_FORMAT=console uv run python -m app     # human-readable lines
 curl -i -H 'X-Request-ID: my-test-request-01' http://127.0.0.1:8000/api/v1/docs
+curl -i http://127.0.0.1:8000/health/live    # 200 {"status":"ok"}
+curl -i http://127.0.0.1:8000/health/ready   # 200 {"status":"ready"}, 503 {"status":"not_ready"} otherwise
 ```
 
 The response echoes `X-Request-ID` (invalid values are replaced by a

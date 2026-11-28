@@ -10,8 +10,9 @@ from fastapi import FastAPI
 
 from app.api.errors import register_error_handlers
 from app.api.middleware import RequestContextMiddleware
-from app.api.router import API_PREFIX, api_router
+from app.api.router import API_PREFIX, api_router, unversioned_routers
 from app.core.logging import configure_logging
+from app.core.readiness import Readiness
 from app.core.settings import Settings, get_settings
 
 logger = logging.getLogger(__name__)
@@ -25,9 +26,16 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     (up to SHUTDOWN_TIMEOUT_SECONDS) before this context exits.
     """
     settings: Settings = app.state.settings
+    readiness: Readiness = app.state.readiness
     logger.info("Backend starting (environment=%s)", settings.app_env)
-    yield
-    logger.info("Backend shutting down")
+    readiness.mark_ready()
+    logger.info("Readiness established")
+    try:
+        yield
+    finally:
+        readiness.mark_not_ready()
+        logger.info("Readiness withdrawn")
+        logger.info("Backend shutting down")
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -45,7 +53,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         redoc_url=None,
     )
     app.state.settings = settings
+    app.state.readiness = Readiness()
     register_error_handlers(app)
     app.add_middleware(RequestContextMiddleware)
     app.include_router(api_router)
+    for router in unversioned_routers():
+        app.include_router(router)
     return app
