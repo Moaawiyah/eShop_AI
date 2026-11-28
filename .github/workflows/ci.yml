@@ -183,12 +183,10 @@ jobs:
       - name: Evaluate job results
         env:
           NEEDS: ${{ toJSON(needs) }}
+        # Skipped jobs (unchanged areas) pass; failed or cancelled jobs fail.
         run: |
-          echo "$NEEDS" | python3 -c '
-          import json, sys
-          needs = json.load(sys.stdin)
-          bad = {k: v["result"] for k, v in needs.items() if v["result"] in ("failure", "cancelled")}
-          for k, v in needs.items():
-              print(f"{k}: {v[\"result\"]}")
-          sys.exit(1 if bad else 0)
-          '
+          printf '%s' "$NEEDS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          if printf '%s' "$NEEDS" | jq -e 'any(.[]; .result == "failure" or .result == "cancelled")' > /dev/null; then
+            echo "::error::At least one CI job failed or was cancelled."
+            exit 1
+          fi
