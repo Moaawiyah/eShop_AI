@@ -521,8 +521,9 @@ backend/
 ### 3.2 Dependency Rules
 
 A package may import only from the packages listed for it. The rules form
-a directed acyclic graph and are enforced by an import-contract check in
-CI (tool selected in SHOP-011).
+a directed acyclic graph and are enforced by import-linter
+(`uv run lint-imports`, configured in `backend/pyproject.toml`, SHOP-011),
+which runs in CI from SHOP-017.
 
 | Package | May depend on |
 |---|---|

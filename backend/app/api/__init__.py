@@ -1,1 +1,1 @@
-"""Versioned router assembly, shared dependencies, middleware, error handlers and OpenAPI settings."""
+"""Versioned router assembly, shared dependencies, middleware, error handlers, OpenAPI."""

@@ -26,7 +26,8 @@ def test_openapi_and_docs_available_in_development(make_settings: MakeSettings) 
 
 @pytest.mark.parametrize("environment", ["staging", "production"])
 def test_openapi_and_docs_disabled_in_shared_environments(
-        make_settings: MakeSettings, environment: str) -> None:
+    make_settings: MakeSettings, environment: str
+) -> None:
     with TestClient(create_app(make_settings(app_env=environment))) as client:
         for path in ("/api/v1/openapi.json", "/api/v1/docs", "/docs", "/redoc"):
             assert client.get(path).status_code == 404, path
@@ -38,12 +39,12 @@ def test_unknown_route_returns_404(make_settings: MakeSettings) -> None:
 
 
 def test_lifespan_logs_start_up_and_shutdown(
-        make_settings: MakeSettings, caplog: pytest.LogCaptureFixture) -> None:
+    make_settings: MakeSettings, caplog: pytest.LogCaptureFixture
+) -> None:
     app = create_app(make_settings(app_env="test"))
-    with caplog.at_level(logging.INFO, logger="app.main"):
-        with TestClient(app):
-            assert "Backend starting (environment=test)" in caplog.text
-            assert "shutting down" not in caplog.text
+    with caplog.at_level(logging.INFO, logger="app.main"), TestClient(app):
+        assert "Backend starting (environment=test)" in caplog.text
+        assert "shutting down" not in caplog.text
     assert "Backend shutting down" in caplog.text
 
 

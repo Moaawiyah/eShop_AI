@@ -18,8 +18,73 @@ testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "--strict-markers"
 
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+# Project root: `app` and `tests` are top-level packages here (matches pytest pythonpath).
+src = ["."]
+
+[tool.ruff.lint]
+# E/W pycodestyle, F pyflakes, I isort, B bugbear, UP pyupgrade, SIM simplify,
+# C4 comprehensions, RUF ruff-specific, N pep8-naming, PT pytest style,
+# ASYNC async pitfalls, T20 no print, RET return style, PTH pathlib, S security (bandit).
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "C4", "RUF", "N", "PT", "ASYNC", "T20", "RET", "PTH", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+# pytest relies on bare assert statements.
+"tests/**" = ["S101"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+plugins = ["pydantic.mypy"]
+files = ["app"]
+warn_unreachable = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+[tool.coverage.run]
+source = ["app"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+# The __main__ guard starts a real server and is not exercised by tests.
+exclude_also = ['if __name__ == "__main__":']
+
+[tool.importlinter]
+root_package = "app"
+
+[[tool.importlinter.contracts]]
+name = "Layered architecture (ARCHITECTURE 3.2)"
+type = "layers"
+layers = [
+    "app.api",
+    "app.modules",
+    "app.integrations",
+    "app.platform",
+    "app.database",
+    "app.core",
+]
+
+[[tool.importlinter.contracts]]
+name = "API layer must not import integrations directly"
+type = "forbidden"
+source_modules = ["app.api"]
+forbidden_modules = ["app.integrations"]
+
 [dependency-groups]
 dev = [
     "httpx2>=2.16.2",
+    "import-linter>=2.17",
+    "mypy>=2.4.1",
     "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.6",
 ]

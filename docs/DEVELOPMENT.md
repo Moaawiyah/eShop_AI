@@ -193,9 +193,11 @@ committed files for personal convenience.
 | Run the backend | `uv run python -m app` (`backend/`; host, port and shutdown timeout from settings) | **Available now** |
 | Run the backend with reload | `uv run uvicorn app.main:create_app --factory --reload` (`backend/`) | **Available now** |
 | Open the API documentation | `http://127.0.0.1:8000/api/v1/docs` (OpenAPI: `/api/v1/openapi.json`; development and test only) | **Available now** |
-| Backend tests | `uv run pytest` (`backend/`; coverage from SHOP-011) | **Available now** |
-| Backend lint and format check | `uv run ruff check .` and `uv run ruff format --check .` (`backend/`) | M1 |
-| Backend type check | `uv run mypy .` (`backend/`) | M1 |
+| Backend tests with coverage | `uv run pytest --cov=app --cov-branch --cov-report=term-missing` (`backend/`; plain `uv run pytest` also works) | **Available now** |
+| Backend lint | `uv run ruff check .` (`backend/`; fix with `uv run ruff check --fix .`) | **Available now** |
+| Backend format check | `uv run ruff format --check .` (`backend/`; fix with `uv run ruff format .`) | **Available now** |
+| Backend type check | `uv run mypy app` (`backend/`) | **Available now** |
+| Backend import contracts | `uv run lint-imports` (`backend/`; contracts in `pyproject.toml`) | **Available now** |
 | Install frontend dependencies | `npm ci` (`frontend/`) | M1 (SHOP-014) |
 | Run the frontend | `npm run dev` (`frontend/`) | M1 |
 | Frontend lint, type check, build | `npm run lint`, `npm run typecheck`, `npm run build` (`frontend/`) | M1 |
