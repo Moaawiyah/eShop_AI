@@ -11,7 +11,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, ValidationInfo, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 REPOSITORY_ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
@@ -35,6 +35,15 @@ class Settings(BaseSettings):
     backend_host: str = "127.0.0.1"
     backend_port: int = Field(default=8000, ge=1, le=65535)
     shutdown_timeout_seconds: int = Field(default=20, ge=1, le=120)
+    log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
+    log_format: Literal["json", "console"] = "json"
+
+    @field_validator("log_level", "log_format", mode="before")
+    @classmethod
+    def _normalize_case(cls, value: object, info: ValidationInfo) -> object:
+        if not isinstance(value, str):
+            return value
+        return value.strip().upper() if info.field_name == "log_level" else value.strip().lower()
 
     @model_validator(mode="after")
     def _no_debug_in_shared_environments(self) -> Settings:

@@ -637,6 +637,32 @@ Example response:
 }
 ```
 
+Implemented contract (SHOP-012):
+
+- Responses use `application/problem+json`. `correlation_id` equals the
+  `X-Request-ID` response header. An incoming `X-Request-ID` is accepted
+  only if it is a single value matching `^[A-Za-z0-9._-]{8,64}$`;
+  otherwise a new 32-character hex ID is generated and a warning (without
+  the supplied value) is logged.
+- Plain HTTP errors (404, 405, ...) use `type: "about:blank"`, the HTTP
+  reason phrase as `title` and `detail`, and keep headers such as `Allow`.
+  Validation, application and internal errors use
+  `https://eshop-ai.local/problems/<code-with-dashes>`. Validation `errors`
+  contain only field paths and error codes, never input values.
+- Unexpected exceptions are caught by the request middleware, logged at
+  ERROR and answered with a generic 500.
+
+Logging: one JSON object per line on stdout with `timestamp` (UTC, ms,
+`Z`), `level`, `service`, `logger`, `event`, `correlation_id` (null outside
+a request) and any `extra` fields that do not override core fields. The access log (`app.api.access`,
+"request completed") records `method`, `route` (matched template or
+`<unmatched>`, never the raw path or query), `status_code` and
+`duration_ms`. Keys containing password, secret, token, authorization,
+cookie, session, csrf, api_key or credential are replaced with
+`[REDACTED]` by the formatter. Exceptions are logged as `exc_type` and
+`exc_frames` only, never the message. `LOG_LEVEL` and `LOG_FORMAT`
+(`json` or `console`) configure it.
+
 ## 4. Internal SDK and Integrations
 
 Status: **Approved** ([ADR-0003](adr/0003-internal-sdk-and-provider-abstraction.md)); built in M5

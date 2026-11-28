@@ -19,6 +19,8 @@ def server_config(settings: Settings) -> uvicorn.Config:
         host=settings.backend_host,
         port=settings.backend_port,
         timeout_graceful_shutdown=settings.shutdown_timeout_seconds,
+        log_config=None,  # logging is configured by create_app (app.core.logging)
+        access_log=False,  # the request middleware writes the access log
     )
 
 

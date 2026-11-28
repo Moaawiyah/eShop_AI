@@ -8,7 +8,10 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from app.api.errors import register_error_handlers
+from app.api.middleware import RequestContextMiddleware
 from app.api.router import API_PREFIX, api_router
+from app.core.logging import configure_logging
 from app.core.settings import Settings, get_settings
 
 logger = logging.getLogger(__name__)
@@ -30,6 +33,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 def create_app(settings: Settings | None = None) -> FastAPI:
     """Build the application; tests pass their own settings."""
     settings = settings or get_settings()
+    configure_logging(settings.log_level, settings.log_format)
     docs = settings.api_docs_enabled
     app = FastAPI(
         title="eShop_AI API",
@@ -41,5 +45,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         redoc_url=None,
     )
     app.state.settings = settings
+    register_error_handlers(app)
+    app.add_middleware(RequestContextMiddleware)
     app.include_router(api_router)
     return app

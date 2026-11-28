@@ -14,3 +14,11 @@ def test_server_uses_settings(make_settings: Callable[..., Settings]) -> None:
     assert config.factory is True
     assert (config.host, config.port) == ("127.0.0.1", 8123)
     assert config.timeout_graceful_shutdown == 7
+
+
+def test_server_leaves_logging_to_the_application(
+    make_settings: Callable[..., Settings],
+) -> None:
+    config = server_config(make_settings())
+    assert config.log_config is None
+    assert config.access_log is False
