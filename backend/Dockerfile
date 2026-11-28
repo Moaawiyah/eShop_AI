@@ -1,7 +1,7 @@
 # eShop_AI backend image (SHOP-122, basic). Build context: backend/.
 # Production hardening (digest pins, scanning, SBOM) is M7 (SHOP-075).
 
-FROM python:3.13.18-slim-trixie AS builder
+FROM python:3.15.1-slim-trixie AS builder
 ENV UV_COMPILE_BYTECODE=0 UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=never
 # uv from its official image (pinned); dependencies come only from uv.lock.
 COPY --from=ghcr.io/astral-sh/uv:0.11.10 /uv /usr/local/bin/uv
@@ -11,7 +11,7 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --locked --no-dev --no-install-project
 COPY app ./app
 
-FROM python:3.13.18-slim-trixie AS runtime
+FROM python:3.15.1-slim-trixie AS runtime
 ENV BACKEND_HOST=0.0.0.0 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
