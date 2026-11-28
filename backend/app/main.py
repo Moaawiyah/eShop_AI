@@ -7,13 +7,15 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 from app.api.errors import register_error_handlers
 from app.api.middleware import RequestContextMiddleware
 from app.api.router import API_PREFIX, api_router, unversioned_routers
+from app.api.security import OriginCheckMiddleware, SecurityHeadersMiddleware
 from app.core.logging import configure_logging
 from app.core.readiness import Readiness
-from app.core.settings import Settings, get_settings
+from app.core.settings import SHARED_ENVIRONMENTS, Settings, get_settings
 from app.platform.flags import FeatureFlags
 
 logger = logging.getLogger(__name__)
@@ -39,6 +41,34 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         logger.info("Backend shutting down")
 
 
+def _add_middleware(app: FastAPI, settings: Settings) -> None:
+    """Register middleware; `add_middleware` makes the last one added the outermost.
+
+    Request flow: security headers -> request context (correlation ID, access
+    log, last-resort 500) -> CORS -> Origin check -> routing. Headers are
+    outermost so they also cover the context middleware's own 500 response;
+    CORS answers preflights before the Origin check (which only sees unsafe
+    methods anyway). The same-origin proxy is the primary browser path; CORS
+    covers direct calls in development.
+    """
+    app.add_middleware(OriginCheckMiddleware, allowed_origins=settings.allowed_origins)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.allowed_origins,
+        allow_credentials=True,
+        allow_methods=["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"],
+        allow_headers=["Content-Type", "X-CSRF-Token", "X-Request-ID"],
+        expose_headers=["X-Request-ID"],
+        max_age=600,
+    )
+    app.add_middleware(RequestContextMiddleware)
+    app.add_middleware(
+        SecurityHeadersMiddleware,
+        hsts=settings.app_env in SHARED_ENVIRONMENTS,
+        docs_enabled=settings.api_docs_enabled,
+    )
+
+
 def create_app(settings: Settings | None = None) -> FastAPI:
     """Build the application; tests pass their own settings."""
     settings = settings or get_settings()
@@ -57,7 +87,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.readiness = Readiness()
     app.state.flags = FeatureFlags(settings)
     register_error_handlers(app)
-    app.add_middleware(RequestContextMiddleware)
+    _add_middleware(app, settings)
     app.include_router(api_router)
     for router in unversioned_routers():
         app.include_router(router)

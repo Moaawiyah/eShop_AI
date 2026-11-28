@@ -46,6 +46,7 @@ threat model, and the operational procedures.
 |---|---|
 | Secret files ignored by Git (`.env`, `.env.*` except `.env.example`, keys, Terraform state and variables, cloud configuration) | `.gitignore`; `git check-ignore -v .env` |
 | `.env.example` contains placeholders only | `.env.example` |
+| Security headers, CORS and Origin verification (SHOP-019, section 8.1) | `backend/app/api/security.py`, `frontend/src/lib/security/headers.ts`; backend `tests/api/test_security.py` |
 | Human approval required for commits, pushes, cloud access, paid APIs and destructive operations | `CLAUDE.md` section 12 |
 | Security rules always loaded for AI-assisted work | `.claude/rules/security.md` (no `paths:` filter) |
 | Documentation consistency checks, read-only | `scripts/validate_docs.py` |
@@ -78,8 +79,8 @@ STRIDE summary per boundary; the condensed version is in
 | ID | Threat | Boundary | Likelihood | Impact | Mitigation | Status |
 |---|---|---|---|---|---|---|
 | T-01 | Credential stuffing or brute force on sign-in | TB-2 | High | Medium | Rate limits with back-off, Argon2id, uniform errors | Planned, SHOP-031, SHOP-033 |
-| T-02 | Session hijacking via XSS | TB-1, TB-2 | Medium | High | `HttpOnly` cookies, CSP, output encoding | Planned, SHOP-019, SHOP-031 |
-| T-03 | Cross-site request forgery | TB-2 | Medium | High | Synchronizer token plus `Origin` check | Planned, SHOP-032 |
+| T-02 | Session hijacking via XSS | TB-1, TB-2 | Medium | High | `HttpOnly` cookies, CSP, output encoding | CSP implemented (SHOP-019); cookies planned, SHOP-031 |
+| T-03 | Cross-site request forgery | TB-2 | Medium | High | Synchronizer token plus `Origin` check | `Origin` check implemented (SHOP-019); token planned, SHOP-032 |
 | T-04 | Insecure direct object reference | TB-2 | Medium | High | `/me` endpoints, object-level checks, authorization sweep tests | Planned, SHOP-031, SHOP-040 |
 | T-05 | Client-side price or total tampering | TB-2 | Medium | Medium | Server-side totals in cents (FR-CART-004) | Planned, SHOP-036, SHOP-037 |
 | T-06 | Overselling through concurrent checkouts | TB-3 | Medium | Medium | Single-transaction stock decrement (FR-CHK-007) | Planned, SHOP-037 |
@@ -159,7 +160,45 @@ Likelihood and impact are qualitative and reviewed at each milestone exit.
 | File uploads | Maximum 10 MB by default; CSV and JSON only, checked by content; streamed parsing with row limits; files never executed or served back (NFR-SEC-011). |
 | CSV exports | Cells beginning with `=`, `+`, `-`, `@`, tab or carriage return are prefixed to neutralize formula injection (NFR-SEC-012). |
 | Error responses | RFC 9457 problem details without stack traces; correlation ID included (NFR-SEC-010). |
-| Security headers | CSP, HSTS (TLS only), `X-Content-Type-Options`, `Referrer-Policy`, `frame-ancestors` (SHOP-019). |
+| Security headers | CSP, HSTS (TLS only), `X-Content-Type-Options`, `Referrer-Policy`, `frame-ancestors`. Implemented (SHOP-019); see section 8.1. |
+
+### 8.1 Security Headers, CORS and Origin Verification (SHOP-019, implemented)
+
+**Backend API** (every response, errors included): `X-Content-Type-Options: nosniff`,
+`X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`,
+`Cross-Origin-Opener-Policy: same-origin`,
+`Permissions-Policy: camera=(), microphone=(), geolocation=()` and
+`Content-Security-Policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'`.
+The interactive docs page (`/api/v1/docs`, development and test only) gets a
+docs-specific CSP allowing only `cdn.jsdelivr.net` scripts and styles, the
+FastAPI favicon host and inline code for that page. `Strict-Transport-Security:
+max-age=31536000; includeSubDomains` is sent only when `APP_ENV` is `staging` or
+`production`. Uvicorn's `server` header is disabled.
+
+**Frontend (Next.js)**: the same static headers (`Referrer-Policy:
+strict-origin-when-cross-origin`) plus a CSP from `src/lib/security/headers.ts`:
+`default-src 'self'`, `script-src 'self' 'unsafe-inline'`, `style-src 'self'
+'unsafe-inline'`, `img-src 'self' data: blob:`, `connect-src 'self'`,
+`frame-ancestors 'none'`, `object-src 'none'`, `base-uri` and `form-action` `'self'`.
+`next dev` additionally allows `'unsafe-eval'` and `ws:`.
+- Known limitation: the CSP is nonce-free because nonces force dynamic rendering of
+  every page, so inline scripts are allowed (`'unsafe-inline'`). A nonce- or
+  hash-based policy is revisited in the M7 OWASP review (SHOP-082).
+- HSTS and `upgrade-insecure-requests` are not set by the app (no TLS locally); the
+  TLS-terminating edge sets them in a later stage.
+
+**CORS** (NFR-SEC-009): an explicit allow-list from `ALLOWED_ORIGINS` (never `*`;
+bare origins only; `https` required in staging and production), credentials allowed,
+methods `GET, HEAD, POST, PUT, PATCH, DELETE`, headers `Content-Type, X-CSRF-Token,
+X-Request-ID`. The same-origin proxy is the primary path; CORS covers direct
+development calls.
+
+**Origin verification**: unsafe methods (`POST`, `PUT`, `PATCH`, `DELETE`) with an
+`Origin` header that is not allow-listed (or is `null`) get a 403 problem
+(`origin_not_allowed`) and a WARNING security log (method and route only, never the
+header value). Requests without `Origin` are allowed (non-browser clients); browser
+protection then rests on the CSRF token (SHOP-032). The `Referer` fallback is part of
+SHOP-032.
 
 ## 9. Rate Limiting and Gatekeeper
 

@@ -22,3 +22,9 @@ def test_server_leaves_logging_to_the_application(
     config = server_config(make_settings())
     assert config.log_config is None
     assert config.access_log is False
+
+
+def test_server_does_not_advertise_the_server_software(
+    make_settings: Callable[..., Settings],
+) -> None:
+    assert server_config(make_settings()).server_header is False

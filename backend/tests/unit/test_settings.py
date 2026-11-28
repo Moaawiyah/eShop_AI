@@ -86,4 +86,45 @@ def test_settings_are_immutable(make_settings: MakeSettings) -> None:
 def test_api_docs_only_in_local_environments(
     make_settings: MakeSettings, environment: str, enabled: bool
 ) -> None:
-    assert make_settings(app_env=environment).api_docs_enabled is enabled
+    settings = make_settings(app_env=environment, allowed_origins=["https://shop.example"])
+    assert settings.api_docs_enabled is enabled
+
+
+def test_allowed_origins_default_is_the_local_frontend(make_settings: MakeSettings) -> None:
+    assert make_settings().allowed_origins == ["http://localhost:3000", "http://127.0.0.1:3000"]
+
+
+def test_allowed_origins_parse_comma_list(
+    make_settings: MakeSettings, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("ALLOWED_ORIGINS", " http://localhost:3000/ , ,https://a.example:8443 ")
+    assert make_settings().allowed_origins == ["http://localhost:3000", "https://a.example:8443"]
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "*",
+        "http://localhost:3000/app",
+        "http://localhost:3000?x=1",
+        "http://user:pw@localhost:3000",
+        "localhost:3000",
+        "ftp://localhost",
+        "http://localhost:notaport",
+    ],
+)
+def test_allowed_origins_reject_invalid_values(
+    make_settings: MakeSettings, monkeypatch: pytest.MonkeyPatch, value: str
+) -> None:
+    monkeypatch.setenv("ALLOWED_ORIGINS", value)
+    with pytest.raises(ValidationError):
+        make_settings()
+
+
+def test_allowed_origins_require_https_in_shared_environments(
+    make_settings: MakeSettings,
+) -> None:
+    with pytest.raises(ValidationError):
+        make_settings(app_env="production", allowed_origins=["http://shop.example"])
+    ok = make_settings(app_env="staging", allowed_origins=["https://shop.example"])
+    assert ok.allowed_origins == ["https://shop.example"]

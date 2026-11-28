@@ -76,6 +76,7 @@ describe("API proxy route", () => {
         headers: {
           accept: "application/json",
           cookie: "sid=1",
+          origin: "http://localhost:3000",
           "x-csrf-token": "t",
           "x-request-id": "rid",
           "content-type": "application/json",
@@ -91,9 +92,36 @@ describe("API proxy route", () => {
       "accept",
       "content-type",
       "cookie",
+      "origin",
       "x-csrf-token",
       "x-request-id",
     ]);
+    expect(sent.get("origin")).toBe("http://localhost:3000");
+  });
+
+  it("does not copy backend security or CORS headers to the browser", async () => {
+    fetchMock.mockResolvedValue(
+      new Response("{}", {
+        headers: {
+          "content-type": "application/json",
+          "content-security-policy": "default-src 'none'",
+          "x-frame-options": "DENY",
+          "strict-transport-security": "max-age=1",
+          "access-control-allow-origin": "https://evil.example",
+        },
+      }),
+    );
+    const response = await GET(
+      new Request("http://web/api/v1/x"),
+      context("x"),
+    );
+    expect([...response.headers.keys()]).toEqual(["content-type"]);
+  });
+
+  it("does not follow redirects", async () => {
+    fetchMock.mockResolvedValue(new Response(null, { status: 302 }));
+    await GET(new Request("http://web/api/v1/x"), context("x"));
+    expect(fetchMock.mock.calls[0]?.[1]?.redirect).toBe("manual");
   });
 
   it("returns only allow-listed response headers and every Set-Cookie", async () => {

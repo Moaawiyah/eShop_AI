@@ -4,6 +4,8 @@ export const REQUEST_HEADERS = [
   "accept",
   "content-type",
   "cookie",
+  // Forwarded so the backend can verify the browser origin (SHOP-019).
+  "origin",
   "x-csrf-token",
   "x-request-id",
 ] as const;

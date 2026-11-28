@@ -41,7 +41,7 @@ def test_enabled_public_flag_and_server_only_flags_hidden(make_settings: MakeSet
 
 
 def test_available_in_production(make_settings: MakeSettings) -> None:
-    response = get(make_settings, app_env="production")
+    response = get(make_settings, app_env="production", allowed_origins=["https://shop.example"])
     assert (response.status_code, response.json()) == (200, {"ai_assistant": False})
 
 
