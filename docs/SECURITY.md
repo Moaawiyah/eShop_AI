@@ -90,8 +90,8 @@ STRIDE summary per boundary; the condensed version is in
 | T-10 | Direct or indirect prompt injection | TB-5 | High | Medium | Instruction/data separation, tool allow-list, output validation | Planned, SHOP-066 to SHOP-069 |
 | T-11 | Personal data or secrets sent to an LLM | TB-5 | Medium | High | No personal data in prompts; redaction for DevOps AI | Planned, SHOP-065, M11 |
 | T-12 | AI cost abuse | TB-5 | Medium | Medium | Gatekeeper budgets, per-session limits, mock default | Planned, SHOP-054 |
-| T-13 | Secret committed to Git | Repository | Medium | High | `.gitignore`, Gitleaks in CI, review | Implemented (`.gitignore`); Planned, SHOP-018 |
-| T-14 | Vulnerable or malicious dependency | CI | Medium | High | Lockfiles, Dependabot, pip-audit, npm audit, pinned actions | Planned, SHOP-018 |
+| T-13 | Secret committed to Git | Repository | Medium | High | `.gitignore`, Gitleaks in CI, review | Implemented (`.gitignore`; Gitleaks, SHOP-018) |
+| T-14 | Vulnerable or malicious dependency | CI | Medium | High | Lockfiles, Dependabot, pip-audit, npm audit, pinned actions | Implemented (SHOP-018, Dependabot, reporting audits) |
 | T-15 | Vulnerable container base image | TB-6 | Medium | Medium | Minimal pinned bases, Trivy | Planned, SHOP-075, SHOP-079 |
 | T-16 | Over-privileged cloud credentials | TB-6 | Low | High | OIDC, least-privilege roles, no long-lived keys | Deferred, SHOP-094 |
 | T-17 | Repudiation of back-office changes | TB-2 | Low | Medium | Append-only audit events | Planned, SHOP-041 |
@@ -333,10 +333,10 @@ secrets with a cryptographically secure generator, for example
 |---|---|---|
 | Lockfiles committed (`uv.lock`, `package-lock.json`); CI uses frozen installs (`uv sync --locked`, `npm ci`) | Backend, frontend | Planned, SHOP-010, SHOP-014 |
 | Dependency justification (purpose, maintenance, license, alternatives) | Every new dependency | Rule in force (`.claude/rules/security.md`) |
-| **Gitleaks** secret scanning on pull requests; full-history scan | Repository | Planned, SHOP-018; history scan SHOP-079 |
-| **Dependabot** version and security updates (pip/uv, npm, GitHub Actions, Docker) | Repository | Planned, SHOP-018 |
-| **pip-audit** against the locked backend dependencies | Backend | Planned, SHOP-018 (reporting), blocking in M7 |
-| **npm audit** against the lockfile | Frontend | Planned, SHOP-018 (reporting), blocking in M7 |
+| **Gitleaks** secret scanning on pull requests; full-history scan | Repository | Implemented (SHOP-018): `.github/workflows/security.yml` job "Gitleaks" scans full history, blocking, config `.gitleaks.toml`; scheduled and extended history scan SHOP-079 |
+| **Dependabot** version and security updates (pip/uv, npm, GitHub Actions, Docker) | Repository | Implemented (SHOP-018): `.github/dependabot.yml` (uv, npm, Docker, GitHub Actions; weekly, minor+patch grouped) |
+| **pip-audit** against the locked backend dependencies | Backend | Implemented (SHOP-018) as reporting in `security.yml` ("pip-audit (report)"); blocking in M7 |
+| **npm audit** against the lockfile | Frontend | Implemented (SHOP-018) as reporting in `security.yml` ("npm audit (report)"); blocking in M7 |
 | **Trivy** image, filesystem and IaC scanning; fails on unresolved critical findings; SBOM generation | Images, Terraform, Helm | Planned, SHOP-079 (FR-DEV-007) |
 | Third-party GitHub Actions pinned to full commit SHAs; least-privilege `permissions:` | CI | Planned, SHOP-017 |
 
