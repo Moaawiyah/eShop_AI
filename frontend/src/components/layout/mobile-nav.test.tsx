@@ -34,7 +34,11 @@ describe("MobileNav", () => {
     await user.click(screen.getByRole("button", { name: "Open menu" }));
 
     const nav = await screen.findByRole("navigation", { name: "Mobile" });
-    expect(within(nav).getAllByRole("link")).toHaveLength(1);
+    expect(
+      within(nav)
+        .getAllByRole("link")
+        .map((link) => link.textContent),
+    ).toEqual(["Home", "System status"]);
     expect(within(nav).getByText("Catalog")).toBeInTheDocument();
     expect(within(nav).getAllByText("Coming soon")).toHaveLength(2);
   });

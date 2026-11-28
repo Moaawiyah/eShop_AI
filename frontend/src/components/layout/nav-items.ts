@@ -12,4 +12,5 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Catalog" },
   { label: "AI assistant" },
+  { label: "System status", href: "/status" },
 ];

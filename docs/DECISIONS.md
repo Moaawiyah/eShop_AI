@@ -16,6 +16,7 @@ Architecture Decision Records (ADRs) live in [`docs/adr/`](adr/). Use the
 | [ADR-0007](adr/0007-postgresql-primary-database.md) | PostgreSQL as the primary database | Accepted | 2026-11-25 |
 | [ADR-0008](adr/0008-docker-and-kubernetes-adoption.md) | Docker and Kubernetes adoption strategy | Accepted | 2026-11-25 |
 | [ADR-0009](adr/0009-typed-settings-feature-flags.md) | Typed settings for feature flags | Accepted | 2026-11-28 |
+| [ADR-0010](adr/0010-openapi-typescript-client.md) | OpenAPI type generation with a thin hand-written client | Accepted | 2026-11-28 |
 
 ## Pending Decisions
 
@@ -36,7 +37,6 @@ they are made.
 | UD-10 | MCP transport and external exposure | SHOP-064 |
 | UD-11 | Repository visibility | Public, verified 2026-11-25 (SHOP-006); recorded in SHOP-008 |
 | UD-12 | Load-testing and end-to-end testing tools | SHOP-030 (end-to-end), M7 (load testing) |
-| UD-14 | OpenAPI-to-TypeScript generator | SHOP-015 |
 | UD-15 | Local mail catcher | Before notification work |
 
 ## Process
