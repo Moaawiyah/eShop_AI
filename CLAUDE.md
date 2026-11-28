@@ -5,9 +5,9 @@ demonstrating software engineering, AWS, DevOps, IaC, observability and agentic 
 Objectives and scope: `docs/PRD.md`. Delivery plan: `docs/ROADMAP.md`.
 
 ## 1. Current Status
-- Milestone: **M0 — Project Initialization**. Application implementation has not started.
-- Work only on documentation, development configuration and project foundations until the
-  project owner approves M1.
+- Milestone: **M1 — Frontend and Backend Foundations, Local Development and Basic CI**. M0 closed on 2026-11-28 with the
+  owner's approval of the M0 documents and of the start of M1 (SHOP-009 and SHOP-125 deferred).
+- Implement only approved M1 tasks within their roadmap scope (`docs/ROADMAP.md` section 7).
 
 ## 2. Instruction Sources and Precedence
 1. Explicit project owner instructions for the current task.

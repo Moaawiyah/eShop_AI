@@ -4,7 +4,7 @@
 |---|---|
 | Document | Product Requirements Document (PRD) |
 | Version | 0.4 — Draft |
-| Status | Draft, pending project owner approval |
+| Status | Approved by the project owner (2026-11-28, M0 exit); changes through pull requests |
 | Jira | SHOP-001, SHOP-002, SHOP-003, SHOP-009 |
 | Milestone | M0 — Project Initialization |
 | Last updated | 2026-11-25 |

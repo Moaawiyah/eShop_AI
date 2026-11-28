@@ -4,16 +4,16 @@
 |---|---|
 | Document | Implementation Roadmap |
 | Version | 0.2 — Draft |
-| Status | Draft, pending project owner approval |
-| Jira | SHOP-002, SHOP-003, SHOP-004, SHOP-006, SHOP-007, SHOP-008, SHOP-124 |
-| Current milestone | M0 — Project Initialization |
-| Last updated | 2026-11-25 |
+| Status | Approved by the project owner (2026-11-28, M0 exit); changes through pull requests |
+| Jira | SHOP-002, SHOP-003, SHOP-004, SHOP-006, SHOP-007, SHOP-008, SHOP-009, SHOP-124 |
+| Current milestone | M1 — Frontend and Backend Foundations, Local Development and Basic CI |
+| Last updated | 2026-11-28 |
 | Related | `docs/PRD.md` v0.3, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `CLAUDE.md`, `.claude/rules/` |
 
-> **Implementation status:** only M0 documentation work has been performed
-> (SHOP-001 to SHOP-008 and SHOP-124 complete, SHOP-009 planned, SHOP-125
-> deferred). Everything else
-> in this roadmap is **planned**.
+> **Implementation status:** M0 is closed (2026-11-28): SHOP-001 to
+> SHOP-008 and SHOP-124 are complete; SHOP-009 (Jira configuration and
+> import) and SHOP-125 are deferred. The project owner approved the M0
+> documents and the start of M1. Everything from M1 onwards is **planned**.
 
 ## 1. How to Read This Roadmap
 
@@ -181,6 +181,7 @@ SHOP-036, −0.5).
 | Basic Dockerfiles in M1, Compose expanded progressively, production optimization in M7 | ADR-0008, SHOP-122, SHOP-075 |
 | No stock reservation for the initial checkout; transactional stock decrement | FR-CHK-007, ARCHITECTURE section 7.5 |
 | Development MCP servers and additional Claude plugins deferred until a development task requires them; M0 exit does not depend on them (2026-11-25) | SHOP-125 |
+| Jira configuration and backlog import deferred by the owner; the import files in `docs/jira/` are kept, and M0 exit does not depend on the import (2026-11-28) | SHOP-009 |
 
 ## 3. Milestone Overview
 
@@ -350,7 +351,7 @@ Each milestone adds its own criteria below.
 | SHOP-006 | `README.md` (the `DECISIONS.md` index was delivered in SHOP-003 and `.env.example` in SHOP-004) | MVP | High | 0.5 | SHOP-003, SHOP-005 | Done |
 | SHOP-007 | Claude Code safeguards and repository conventions: project permission rules (allow, ask, deny), lightweight deterministic hooks in `.claude/hooks/`, plugin scope review, placeholder READMEs for empty directories, `.editorconfig`, `.gitattributes` (VS Code files delivered in SHOP-004) | MVP | High | 1 | SHOP-005 | Done (runtime safeguards verified 2026-11-25) |
 | SHOP-008 | GitHub repository setup: record visibility (UD-11; public, verified in SHOP-006), MIT `LICENSE`, `main` ruleset (pull requests, no force pushes or deletion, no required approvals; required CI checks deferred to M1), private vulnerability reporting, Dependabot alerts, review of the merged Claude GitHub Actions workflows (approval required) | MVP | High | 0.5 | SHOP-006, SHOP-007 | Done (settings applied and verified 2026-11-25; PR #3) |
-| SHOP-009 | Jira project setup and backlog import (section 10) | MVP | Medium | 0.5 | SHOP-002 | Planned |
+| SHOP-009 | Jira project setup and backlog import (section 10) | MVP | Medium | 0.5 | SHOP-002 | Deferred by the owner (2026-11-28): import files prepared in `docs/jira/`; Jira configuration and import not done; not an M0 exit requirement |
 | SHOP-124 | Project-specific Claude skills and subagents in `.claude/skills/` and `.claude/agents/`, only where they provide measurable value (added in SHOP-007) | MVP | Medium | 0.5 | SHOP-007 | Done |
 | SHOP-125 | Claude Code development MCP configuration (`.mcp.json`): servers, scopes, credentials handling and permission rules; external services only with approval (added in SHOP-007) | MVP | Medium | 0.5 | SHOP-007 | Deferred until a development task requires it (section 2.4); not an M0 exit requirement |
 
@@ -373,9 +374,11 @@ Each milestone adds its own criteria below.
   verified; Claude permission deny rules for high-risk commands.
 - **Cost considerations:** zero; GitHub and Jira free tiers.
 - **Definition of Done (additional):** owner review of every document.
-- **Exit criteria:** SHOP-001 to SHOP-009 and SHOP-124 are done
-  (SHOP-125 is deferred and does not block exit); the project owner
-  approves the M0 documents and approves the start of M1.
+- **Exit criteria:** SHOP-001 to SHOP-008 and SHOP-124 are done
+  (SHOP-009 and SHOP-125 are deferred and do not block exit); the project
+  owner approves the M0 documents and approves the start of M1.
+- **Exit status:** met on 2026-11-28. The project owner approved the M0
+  documents and the start of M1.
 
 ### M1 — Frontend and Backend Foundations, Local Development and Basic CI
 
@@ -1071,8 +1074,8 @@ and no stage that costs money starts without explicit approval.
 - The owner creates the project and runs the import in the Jira web UI.
   The steps are in [`docs/jira/README.md`](jira/README.md). No API, MCP
   server or plugin is used.
-- SHOP-009 is Done only after the import has been verified and
-  `docs/jira/issue-map.csv` holds the real keys.
+- SHOP-009 is deferred (2026-11-28). It is Done only after the import
+  has been verified and `docs/jira/issue-map.csv` holds the real keys.
 
 ## 11. Decision Schedule and Roadmap Risks
 

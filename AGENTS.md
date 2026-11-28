@@ -42,5 +42,5 @@ the agent rules below and never overrides `CLAUDE.md`.
 
 ## 3. Current Milestone
 
-M0 — Project Initialization. Do not implement application features until
-the project owner approves M1.
+M1 — Frontend and Backend Foundations, Local Development and Basic CI. M0 closed on 2026-11-28 with the
+owner's approval. Implement only approved M1 tasks within their roadmap scope.

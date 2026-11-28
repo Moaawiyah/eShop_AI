@@ -4,7 +4,7 @@
 |---|---|
 | Version | 0.1 — Draft |
 | Jira | SHOP-004 (setup steps completed in SHOP-020) |
-| Milestone | M0 — Project Initialization |
+| Milestone | M1 — Frontend and Backend Foundations, Local Development and Basic CI |
 | Last updated | 2026-11-25 |
 | Related | [Architecture](ARCHITECTURE.md) · [Roadmap](ROADMAP.md) · [Security](SECURITY.md) · [Contributing](../CONTRIBUTING.md) |
 
