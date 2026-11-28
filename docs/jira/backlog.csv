@@ -18,7 +18,7 @@ SHOP-016,SHOP-016 Typed configuration and feature flags,Task,Done,Medium,M1,mvp,
 SHOP-017,SHOP-017 Basic CI pipeline,Task,Done,Highest,M1,mvp,devops,tier-1,,43200,"Roadmap ID SHOP-017. Depends on: SHOP-011, SHOP-014. Acceptance criteria: docs/ROADMAP.md section 7, M1."
 SHOP-018,SHOP-018 Basic security automation,Task,Done,High,M1,mvp,security,tier-1,,28800,"Roadmap ID SHOP-018. Depends on: SHOP-017. Acceptance criteria: docs/ROADMAP.md section 7, M1."
 SHOP-019,SHOP-019 Security headers and CORS baseline,Task,Done,High,M1,mvp,security,tier-1,,28800,"Roadmap ID SHOP-019. Depends on: SHOP-012, SHOP-014. Acceptance criteria: docs/ROADMAP.md section 7, M1."
-SHOP-020,SHOP-020 Local development documentation,Task,To Do,Medium,M1,mvp,docs,tier-1,,14400,"Roadmap ID SHOP-020. Depends on: SHOP-017. Acceptance criteria: docs/ROADMAP.md section 7, M1."
+SHOP-020,SHOP-020 Local development documentation,Task,Done,Medium,M1,mvp,docs,tier-1,,14400,"Roadmap ID SHOP-020. Depends on: SHOP-017. Acceptance criteria: docs/ROADMAP.md section 7, M1."
 SHOP-021,SHOP-021 ADR search implementation and data access,Task,To Do,High,M2,mvp,backend,tier-1,,14400,"Roadmap ID SHOP-021. Depends on: SHOP-020. Acceptance criteria: docs/ROADMAP.md section 7, M2."
 SHOP-022,SHOP-022 Extend Docker Compose with PostgreSQL,Task,To Do,Highest,M2,mvp,devops,tier-1,,28800,"Roadmap ID SHOP-022. Depends on: SHOP-020, SHOP-122. Acceptance criteria: docs/ROADMAP.md section 7, M2."
 SHOP-023,SHOP-023 SQLAlchemy and Alembic migrations,Task,To Do,Highest,M2,mvp,backend,tier-1,,57600,"Roadmap ID SHOP-023. Depends on: SHOP-022. Acceptance criteria: docs/ROADMAP.md section 7, M2."
