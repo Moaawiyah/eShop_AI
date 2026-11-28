@@ -1,0 +1,133 @@
+# Basic security automation (SHOP-018).
+# Blocking in M1: secrets scanning only (job "Gitleaks" is a required check).
+# Reporting only until M7 (SHOP-079): pip-audit and npm audit never fail the
+# workflow; results go to the job summary. Trivy and blocking dependency
+# thresholds are M7.
+name: Security
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  gitleaks:
+    name: Gitleaks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # Pinned release binary, verified against a pinned SHA-256 (from the
+      # official gitleaks_8.30.1_checksums.txt). Chosen over gitleaks-action:
+      # no token, no extra permissions, no telemetry or license check.
+      GITLEAKS_VERSION: "8.30.1"
+      GITLEAKS_SHA256: "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install gitleaks
+        run: |
+          set -euo pipefail
+          archive="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -sSfL --retry 3 -o "$RUNNER_TEMP/$archive" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/${archive}"
+          echo "${GITLEAKS_SHA256}  $RUNNER_TEMP/$archive" | sha256sum --check --strict
+          mkdir "$RUNNER_TEMP/gitleaks"
+          tar -xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP/gitleaks" gitleaks
+      - name: Scan history for secrets
+        run: |
+          "$RUNNER_TEMP/gitleaks/gitleaks" git --redact --exit-code 1 --verbose .
+
+  pip-audit:
+    name: pip-audit (report)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up uv
+        uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          python-version: "3.13"
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Export locked runtime dependencies
+        run: uv export --locked --no-dev --no-hashes --format requirements-txt -o "$RUNNER_TEMP/requirements.txt"
+      - name: Audit (report only)
+        id: audit
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          uvx pip-audit==2.10.1 -r "$RUNNER_TEMP/requirements.txt" --no-deps --disable-pip 2>&1 | tee "$RUNNER_TEMP/pip-audit.txt"
+      - name: Summary
+        if: always()
+        env:
+          OUTCOME: ${{ steps.audit.outcome }}
+        run: |
+          {
+            echo "### pip-audit (report only, non-blocking until M7)"
+            echo "Outcome: \`$OUTCOME\`"
+            echo '```'
+            tail -n 60 "$RUNNER_TEMP/pip-audit.txt" || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  npm-audit:
+    name: npm audit (report)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: frontend/.nvmrc
+      - name: Audit production dependencies (report only)
+        id: prod
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          npm audit --omit=dev 2>&1 | tee "$RUNNER_TEMP/npm-audit-prod.txt"
+      - name: Audit all dependencies (report only)
+        id: all
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          npm audit 2>&1 | tee "$RUNNER_TEMP/npm-audit-all.txt"
+      - name: Summary
+        if: always()
+        env:
+          PROD_OUTCOME: ${{ steps.prod.outcome }}
+          ALL_OUTCOME: ${{ steps.all.outcome }}
+        run: |
+          {
+            echo "### npm audit (report only, non-blocking until M7)"
+            echo "Production dependencies: \`$PROD_OUTCOME\`; all dependencies: \`$ALL_OUTCOME\`"
+            echo '```'
+            tail -n 40 "$RUNNER_TEMP/npm-audit-prod.txt" || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

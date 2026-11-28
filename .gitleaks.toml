@@ -1,0 +1,12 @@
+# Gitleaks configuration (SHOP-018). Extends the default ruleset; keep allow-list
+# entries narrow (rule + path) and justified.
+title = "eShop_AI gitleaks config"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Synthetic fake key used by the docs validator test to prove that a secret-looking value in .env.example is rejected."
+condition = "AND"
+paths = ['''(^|/)scripts/tests/test_validate_docs\.py$''']
+targetRules = ["generic-api-key"]
