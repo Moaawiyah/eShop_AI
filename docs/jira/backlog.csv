@@ -10,7 +10,7 @@ SHOP-008,SHOP-008 GitHub repository setup,Task,Done,High,M0,mvp,devops,tier-1,,1
 SHOP-009,SHOP-009 Jira project setup and backlog import,Task,To Do,Medium,M0,mvp,docs,tier-1,deferred,14400,"Roadmap ID SHOP-009. Depends on: SHOP-002. Acceptance criteria: docs/ROADMAP.md section 7, M0."
 SHOP-010,SHOP-010 Backend skeleton,Task,Done,Highest,M1,mvp,backend,tier-1,,57600,"Roadmap ID SHOP-010. Depends on: SHOP-008. Acceptance criteria: docs/ROADMAP.md section 7, M1."
 SHOP-011,SHOP-011 Backend quality tooling,Task,Done,Highest,M1,mvp,backend,tier-1,,28800,"Roadmap ID SHOP-011. Depends on: SHOP-010. Acceptance criteria: docs/ROADMAP.md section 7, M1."
-SHOP-012,SHOP-012 Structured logging and safe error handling,Task,To Do,High,M1,mvp,backend,tier-1,,43200,"Roadmap ID SHOP-012. Depends on: SHOP-010. Acceptance criteria: docs/ROADMAP.md section 7, M1."
+SHOP-012,SHOP-012 Structured logging and safe error handling,Task,Done,High,M1,mvp,backend,tier-1,,43200,"Roadmap ID SHOP-012. Depends on: SHOP-010. Acceptance criteria: docs/ROADMAP.md section 7, M1."
 SHOP-013,SHOP-013 Liveness and readiness endpoints,Task,To Do,High,M1,mvp,backend,tier-1,,14400,"Roadmap ID SHOP-013. Depends on: SHOP-010. Acceptance criteria: docs/ROADMAP.md section 7, M1."
 SHOP-014,SHOP-014 Frontend skeleton,Task,To Do,Highest,M1,mvp,frontend,tier-1,,57600,"Roadmap ID SHOP-014. Depends on: SHOP-008. Acceptance criteria: docs/ROADMAP.md section 7, M1."
 SHOP-015,SHOP-015 Typed API client foundation,Task,To Do,High,M1,mvp,frontend,tier-1,,43200,"Roadmap ID SHOP-015. Depends on: SHOP-010, SHOP-014. Acceptance criteria: docs/ROADMAP.md section 7, M1."

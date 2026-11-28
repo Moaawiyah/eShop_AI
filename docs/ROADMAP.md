@@ -14,8 +14,9 @@
 > SHOP-008 and SHOP-124 are complete; SHOP-009 (Jira configuration and
 > import) and SHOP-125 are deferred. The project owner approved the M0
 > documents and the start of M1. M1 is in progress: SHOP-010 (backend
-> skeleton) and SHOP-011 (backend quality tooling) are complete. Everything
-> else from M1 onwards is **planned**.
+> skeleton), SHOP-011 (backend quality tooling) and SHOP-012 (structured
+> logging and error handling) are complete. Everything else from M1 onwards
+> is **planned**.
 
 ## 1. How to Read This Roadmap
 
@@ -403,7 +404,7 @@ Each milestone adds its own criteria below.
 |---|---|---|---|---|---|---|
 | SHOP-010 | Backend skeleton: uv project, FastAPI app factory, module layout, Pydantic Settings, graceful shutdown | MVP | Highest | 2 | SHOP-008 | Done (PR #8) |
 | SHOP-011 | Backend quality tooling: Ruff, mypy, pytest with coverage; first unit tests | MVP | Highest | 1 | SHOP-010 | Done (PR #9) |
-| SHOP-012 | Structured JSON logging, correlation ID middleware, safe error handler | MVP | High | 1.5 | SHOP-010 | Planned |
+| SHOP-012 | Structured JSON logging, correlation ID middleware, safe error handler | MVP | High | 1.5 | SHOP-010 | Done (PR #11) |
 | SHOP-013 | Liveness and readiness endpoints | MVP | High | 0.5 | SHOP-010 | Planned |
 | SHOP-014 | Frontend skeleton: Next.js, TypeScript strict, Tailwind, shadcn/ui, ESLint, Prettier, base layout | MVP | Highest | 2 | SHOP-008 | Planned |
 | SHOP-015 | Typed API client foundation: OpenAPI type generation, single client, CI drift check | MVP | High | 1.5 | SHOP-010, SHOP-014 | Planned |
