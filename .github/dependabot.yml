@@ -1,5 +1,6 @@
 # Dependabot version and security updates (SHOP-018). Weekly, minor+patch
 # grouped per ecosystem; major updates arrive as individual pull requests.
+# Runtime versions (Python 3.13, Node.js LTS major) are pinned via `ignore`.
 version: 2
 updates:
   - package-ecosystem: uv
@@ -23,6 +24,10 @@ updates:
     groups:
       frontend-minor-patch:
         update-types: [minor, patch]
+    ignore:
+      # Type definitions follow the pinned Node.js LTS major.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: docker
     directory: /backend
@@ -34,6 +39,11 @@ updates:
     groups:
       docker-backend-minor-patch:
         update-types: [minor, patch]
+    ignore:
+      # The runtime is pinned to Python 3.13 (CLAUDE.md section 4): accept
+      # 3.13.x patch images only; a Python upgrade is a deliberate decision.
+      - dependency-name: python
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
   - package-ecosystem: docker
     directory: /frontend
@@ -45,6 +55,10 @@ updates:
     groups:
       docker-frontend-minor-patch:
         update-types: [minor, patch]
+    ignore:
+      # Node.js stays on the pinned LTS major (frontend/.nvmrc and engines).
+      - dependency-name: node
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
