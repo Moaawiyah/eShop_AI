@@ -9,8 +9,13 @@ import pytest
 
 from app.core.settings import Settings, get_settings
 
-SETTING_VARIABLES = ("APP_ENV", "APP_DEBUG", "BACKEND_HOST", "BACKEND_PORT",
-                     "SHUTDOWN_TIMEOUT_SECONDS")
+SETTING_VARIABLES = (
+    "APP_ENV",
+    "APP_DEBUG",
+    "BACKEND_HOST",
+    "BACKEND_PORT",
+    "SHUTDOWN_TIMEOUT_SECONDS",
+)
 
 
 @pytest.fixture(autouse=True)
