@@ -127,6 +127,13 @@ uv run --no-project --python 3.13 scripts/validate_docs.py
 - Defaults are safe: AI uses the mock provider, external sources and
   paid APIs are disabled.
 
+Feature flags (SHOP-016, ADR-0009) are read from `FEATURE_AI_ASSISTANT`,
+`FEATURE_EXTERNAL_PRODUCT_SOURCES` and `FEATURE_NOTIFICATIONS`; all default
+to `false` and an invalid value stops start-up. Only `ai_assistant` is
+public; read it with
+`curl -s http://127.0.0.1:8000/api/v1/config/public-flags`
+(`{"ai_assistant":false}`). Restart the backend after changing a flag.
+
 Verify the ignore rules (**available now**):
 
 ```bash

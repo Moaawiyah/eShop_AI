@@ -722,7 +722,7 @@ infrastructure capability (FR-PLAT-016).
 | Scheduler | Declarative schedules with single execution | schedule list in configuration; enable flag per schedule | Job framework scheduler or Kubernetes CronJob | Deferred tool (UD-04), M5 |
 | Notification manager | Channel-independent notifications with templates and delivery status | `notify(recipient, template, data, channels)`; channel interface | In-app store plus local mail catcher (UD-15) | Proposed, ADV M5 |
 | Audit logging | Append-only record of back-office writes, security events and AI approvals | `record(actor, action, target, changes, context)`; `query(filters, cursor)` | PostgreSQL table, same transaction as the change | Approved, M4 |
-| Feature flags | Typed, safe-by-default switches; public subset for the frontend | `is_enabled(flag, context)`; `public_flags()` | Typed settings first (UD-13) | Approved concept, M1 |
+| Feature flags | Typed, safe-by-default switches; public subset for the frontend | `is_enabled(flag)`; `public_flags()` (`context` added with targeting) | Typed `FEATURE_*` settings; `GET /api/v1/config/public-flags` (ADR-0009) | Implemented (SHOP-016, ADR-0009) |
 | Retry management | Shared bounded retry policies | policy: attempts, total duration, back-off, retryable errors | Job framework retries or a retry library | Approved, M5 |
 | Dead-letter handling | Hold exhausted jobs; inspect, retry or discard with audit | `list()`, `retry(id)`, `discard(id)` | Job framework failure handling plus a table if required | Approved, M5 |
 | Circuit breakers | Stop calling failing providers temporarily | per-provider state: closed, open, half-open | Library, only when justified | Proposed, ADV M5 |
@@ -1146,11 +1146,12 @@ Status: **Proposed** conventions, confirmed in SHOP-010 and SHOP-026.
 | Idempotency | `Idempotency-Key` header required on `POST /api/v1/orders`; same key and payload returns the original order; same key with a different payload returns 409. |
 | OpenAPI | Served at `/api/v1/openapi.json`; interactive docs enabled locally and protected or disabled in shared environments. |
 
-**Representative endpoint groups** (only Health is implemented, SHOP-013; the rest is planned):
+**Representative endpoint groups** (only Health, SHOP-013, and Config, SHOP-016, are implemented; the rest is planned):
 
 | Group | Base path | Examples | Access |
 |---|---|---|---|
 | Health (implemented, SHOP-013) | `/health` | `GET /health/live` (always `200 {"status":"ok"}`), `GET /health/ready` (`200 {"status":"ready"}` after start-up, `503 {"status":"not_ready"}` before start-up and once shutdown begins; database and Redis checks arrive in M2, Watchdog checks in M8) | Public |
+| Config (implemented, SHOP-016) | `/api/v1/config` | `GET /config/public-flags` (`200 {"ai_assistant": false}`; allow-listed flags only, `Cache-Control: no-store`) | Public |
 | Auth | `/api/v1/auth` | `POST /register`, `POST /sign-in`, `POST /sign-out`, `GET /csrf` | Public or session |
 | Profile | `/api/v1/me` | `GET /me`, `PATCH /me`, `GET/POST /me/addresses` | Customer |
 | Catalog | `/api/v1/categories`, `/api/v1/products` | `GET /categories`, `GET /products?…`, `GET /products/{slug}`, `GET /products/compare?slugs=…` | Public |

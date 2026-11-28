@@ -14,6 +14,7 @@ from app.api.router import API_PREFIX, api_router, unversioned_routers
 from app.core.logging import configure_logging
 from app.core.readiness import Readiness
 from app.core.settings import Settings, get_settings
+from app.platform.flags import FeatureFlags
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +55,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.state.settings = settings
     app.state.readiness = Readiness()
+    app.state.flags = FeatureFlags(settings)
     register_error_handlers(app)
     app.add_middleware(RequestContextMiddleware)
     app.include_router(api_router)
