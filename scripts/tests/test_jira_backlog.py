@@ -14,7 +14,7 @@ from test_validate_docs import MutationCase
 
 BACKLOG = "docs/jira/backlog.csv"
 ISSUE_MAP = "docs/jira/issue-map.csv"
-ROW_010 = "SHOP-010,SHOP-010 Backend skeleton,Task,To Do,Highest,M1,mvp,backend,tier-1,,57600,"
+ROW_010 = "SHOP-010,SHOP-010 Backend skeleton,Task,Done,Highest,M1,mvp,backend,tier-1,,57600,"
 
 
 class JiraBacklogTests(MutationCase):
