@@ -4,7 +4,7 @@ A cloud-native, AI-powered electronics e-commerce platform, built as an
 educational, non-commercial portfolio project to demonstrate software
 engineering, DevOps, infrastructure as code, observability, AWS and agentic AI.
 
-> **Status: M0 — Project Initialization.** Requirements, architecture,
+> **Status: M1 — Foundations (in progress; M0 closed 2026-11-28).** Requirements, architecture,
 > security baseline, delivery plan and development tooling are documented.
 > **No application code exists yet**; every product capability below is
 > **planned**. Payments are always simulated and all data is synthetic.

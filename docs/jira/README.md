@@ -92,7 +92,7 @@ Run these JQL searches:
 | Check | JQL | Expected |
 |---|---|---|
 | Issue count | `project = ESHOP` | 32 issues |
-| Deferred task | `project = ESHOP AND labels = deferred` | Only SHOP-125, status To Do |
+| Deferred tasks | `project = ESHOP AND labels = deferred` | Only SHOP-009 and SHOP-125, status To Do |
 | Done tasks | `project = ESHOP AND status = Done` | 9 issues (SHOP-001 to SHOP-008 and SHOP-124) |
 | Missing resolution | `project = ESHOP AND status = Done AND resolution is EMPTY` | None. If any appear, set Resolution to Done with **Bulk change** |
 | Estimates | Open SHOP-010 | Original Estimate shows 2d |
